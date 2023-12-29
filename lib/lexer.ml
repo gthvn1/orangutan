@@ -20,8 +20,28 @@ let read_char (lexer : t) : t =
       read_position = lexer.read_position + 1;
     }
 
+let rec skip_whitespace (lexer : t) : t =
+  match lexer.ch with
+  | ' ' | '\t' | '\n' | '\r' -> skip_whitespace (read_char lexer)
+  | _ -> lexer
+
+(** Identifier supports ascii and '_' *)
+let is_letter (ch : char) : bool =
+  ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch = '_'
+
+let read_identifier (lexer : t) : t * string =
+  let _ = is_letter lexer.ch in
+  (* added to use lexer *)
+  failwith "TODO"
+
+let read_number (lexer : t) : t * int =
+  let _ = is_letter lexer.ch in
+  (* added to use lexer *)
+  failwith "TODO"
+
 (** We want to provide a Sequence of Tokens *)
 let rec next_token (lexer : t) : Token.t Seq.t =
+  let lexer = skip_whitespace lexer in
   let tok =
     match lexer.ch with
     | '=' -> Token.Assign

@@ -75,7 +75,7 @@ let test_different_tokens () =
       Token.RBrace;
     ]
   in
-  let lexer = Lexer.new_lexer "=;(),+{}" in
+  let lexer = Lexer.new_lexer " = ; ( ) , + { } " in
   let tokens = get_all_tokens_helper lexer in
   Alcotest.(check token_list) "same tokens" expected tokens
 

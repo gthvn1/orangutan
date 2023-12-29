@@ -9,3 +9,11 @@ val read_char : t -> t
 
 val next_token : t -> Token.t Seq.t
 (** [next_token lexer] returns a sequence of tokens for a given [lexer]. *)
+
+val read_identifier : t -> t * string
+(** [read_identifier l] reads the identifier in the input string. It returns the
+    updated lexer and the identifier. *)
+
+val read_number : t -> t * int
+(** [read_number l] reads the next number in the input string. It returns the
+    updated lexer and the number as an int. *)
