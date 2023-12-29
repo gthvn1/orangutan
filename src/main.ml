@@ -1,2 +1,1 @@
-let () =
-  print_endline "Welcome to Monkey Islang!"
+let () = print_endline "Welcome to Monkey Islang!"
