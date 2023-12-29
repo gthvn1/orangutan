@@ -1,6 +1,3 @@
-(**********************************************************************)
-(* TESTS                                                              *)
-(**********************************************************************)
 module Lexer = Monkey.Lexer
 module Token = Monkey.Token
 
@@ -21,6 +18,14 @@ let token_list =
   end in
   (module M : Alcotest.TESTABLE with type t = M.t)
 
+let get_all_tokens_helper lexer =
+  Lexer.next_token lexer
+  |> Seq.take_while (fun t -> t != Token.EOF)
+  |> List.of_seq
+
+(**********************************************************************
+ ** testing read character                                            *
+ **********************************************************************)
 let test_abc_new () =
   let lexer = Lexer.new_lexer "abc" in
   Alcotest.(check int) "read_position" 1 lexer.read_position;
@@ -48,15 +53,13 @@ let test_abc_read_more () =
   Alcotest.(check int) "read_position" 3 lexer.read_position;
   Alcotest.(check char) "ch" '\000' lexer.ch
 
+(**********************************************************************
+ ** testing lexer                                                     *
+ **********************************************************************)
 let test_two_assign () =
   let expected = [ Token.Assign; Token.Assign ] in
   let lexer = Lexer.new_lexer "==" in
-  let tokens =
-    Lexer.next_token lexer
-    |> Seq.take_while (fun t -> t != Token.EOF)
-    |> List.of_seq
-  in
-  Alcotest.(check int) "same length" (List.length expected) (List.length tokens);
+  let tokens = get_all_tokens_helper lexer in
   Alcotest.(check token_list) "same tokens" expected tokens
 
 let test_different_tokens () =
@@ -73,14 +76,12 @@ let test_different_tokens () =
     ]
   in
   let lexer = Lexer.new_lexer "=;(),+{}" in
-  let tokens =
-    Lexer.next_token lexer
-    |> Seq.take_while (fun t -> t != Token.EOF)
-    |> List.of_seq
-  in
-  Alcotest.(check int) "same length" (List.length expected) (List.length tokens);
+  let tokens = get_all_tokens_helper lexer in
   Alcotest.(check token_list) "same tokens" expected tokens
 
+(**********************************************************************
+ ** Main                                                              *
+ **********************************************************************)
 let () =
   let open Alcotest in
   run "Lexer"
