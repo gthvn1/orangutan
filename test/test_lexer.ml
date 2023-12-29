@@ -59,6 +59,28 @@ let test_two_assign () =
   Alcotest.(check int) "same length" (List.length expected) (List.length tokens);
   Alcotest.(check token_list) "same tokens" expected tokens
 
+let test_different_tokens () =
+  let expected =
+    [
+      Token.Assign;
+      Token.Semicolon;
+      Token.LParen;
+      Token.RParen;
+      Token.Comma;
+      Token.Plus;
+      Token.LBrace;
+      Token.RBrace;
+    ]
+  in
+  let lexer = Lexer.new_lexer "=;(),+{}" in
+  let tokens =
+    Lexer.next_token lexer
+    |> Seq.take_while (fun t -> t != Token.EOF)
+    |> List.of_seq
+  in
+  Alcotest.(check int) "same length" (List.length expected) (List.length tokens);
+  Alcotest.(check token_list) "same tokens" expected tokens
+
 let () =
   let open Alcotest in
   run "Lexer"
@@ -71,5 +93,9 @@ let () =
           test_case "read three characters" `Quick test_abc_read_thrice;
           test_case "read more than three characters" `Quick test_abc_read_more;
         ] );
-      ("token", [ test_case "two assigns" `Quick test_two_assign ]);
+      ( "token",
+        [
+          test_case "two assigns" `Quick test_two_assign;
+          test_case "different tokens" `Quick test_different_tokens;
+        ] );
     ]

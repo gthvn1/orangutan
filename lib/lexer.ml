@@ -25,6 +25,13 @@ let rec next_token (lexer : t) : Token.t Seq.t =
   let tok =
     match lexer.ch with
     | '=' -> Token.Assign
+    | ';' -> Token.Semicolon
+    | '(' -> Token.LParen
+    | ')' -> Token.RParen
+    | ',' -> Token.Comma
+    | '+' -> Token.Plus
+    | '{' -> Token.LBrace
+    | '}' -> Token.RBrace
     | '\000' -> Token.EOF
     | _ -> Token.Illegal
   in
