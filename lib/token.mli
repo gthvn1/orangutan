@@ -26,3 +26,5 @@ type t =
   | GT
   | EQ
   | NotEQ
+
+val pp : Format.formatter -> t -> unit

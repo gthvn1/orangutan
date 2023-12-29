@@ -1,35 +1,63 @@
 (**********************************************************************)
 (* TESTS                                                              *)
 (**********************************************************************)
+module Lexer = Monkey.Lexer
+module Token = Monkey.Token
+
+(** To be able to test token list we need to wrap Token.t in a module that
+   provides a pretty printer function and an equality checking function. *)
+let token_list =
+  let token_list_equal xs ys =
+    List.length xs = List.length ys && List.for_all2 ( = ) xs ys
+  in
+  let module M = struct
+    type t = Token.t list
+
+    let pp fmt xs =
+      let pp_sep fmt () = Format.fprintf fmt ", " in
+      Format.fprintf fmt "[%a]" (Format.pp_print_list ~pp_sep Token.pp) xs
+
+    let equal = token_list_equal
+  end in
+  (module M : Alcotest.TESTABLE with type t = M.t)
+
 let test_abc_new () =
-  let lexer = Monkey.Lexer.new_lexer "abc" in
+  let lexer = Lexer.new_lexer "abc" in
   Alcotest.(check int) "read_position" 1 lexer.read_position;
   Alcotest.(check char) "ch" 'a' lexer.ch
 
 let test_abc_read_once () =
-  let lexer = Monkey.Lexer.(new_lexer "abc" |> read_char) in
+  let lexer = Lexer.(new_lexer "abc" |> read_char) in
   Alcotest.(check int) "read_position" 2 lexer.read_position;
   Alcotest.(check char) "ch" 'b' lexer.ch
 
 let test_abc_read_twice () =
-  let lexer = Monkey.Lexer.(new_lexer "abc" |> read_char |> read_char) in
+  let lexer = Lexer.(new_lexer "abc" |> read_char |> read_char) in
   Alcotest.(check int) "read_position" 3 lexer.read_position;
   Alcotest.(check char) "ch" 'c' lexer.ch
 
 let test_abc_read_thrice () =
-  let lexer =
-    Monkey.Lexer.(new_lexer "abc" |> read_char |> read_char |> read_char)
-  in
+  let lexer = Lexer.(new_lexer "abc" |> read_char |> read_char |> read_char) in
   Alcotest.(check int) "read_position" 3 lexer.read_position;
   Alcotest.(check char) "ch" '\000' lexer.ch
 
 let test_abc_read_more () =
   let lexer =
-    Monkey.Lexer.(
-      new_lexer "abc" |> read_char |> read_char |> read_char |> read_char)
+    Lexer.(new_lexer "abc" |> read_char |> read_char |> read_char |> read_char)
   in
   Alcotest.(check int) "read_position" 3 lexer.read_position;
   Alcotest.(check char) "ch" '\000' lexer.ch
+
+let test_two_assign () =
+  let expected = [ Token.Assign; Token.Assign ] in
+  let lexer = Lexer.new_lexer "==" in
+  let tokens =
+    Lexer.next_token lexer
+    |> Seq.take_while (fun t -> t != Token.EOF)
+    |> List.of_seq
+  in
+  Alcotest.(check int) "same length" (List.length expected) (List.length tokens);
+  Alcotest.(check token_list) "same tokens" expected tokens
 
 let () =
   let open Alcotest in
@@ -43,4 +71,5 @@ let () =
           test_case "read three characters" `Quick test_abc_read_thrice;
           test_case "read more than three characters" `Quick test_abc_read_more;
         ] );
+      ("token", [ test_case "two assigns" `Quick test_two_assign ]);
     ]

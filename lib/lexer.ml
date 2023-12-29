@@ -20,7 +20,12 @@ let read_char (lexer : t) : t =
       read_position = lexer.read_position + 1;
     }
 
-let next_token (lexer : t) : Token.t =
-  let _ = lexer.ch in
-  (* just here to use lexer and ch field *)
-  failwith "TODO"
+(** We want to provide a Sequence of Tokens *)
+let rec next_token (lexer : t) : Token.t Seq.t =
+  let tok =
+    match lexer.ch with
+    | '=' -> Token.Assign
+    | '\000' -> Token.EOF
+    | _ -> Token.Illegal
+  in
+  fun () -> Seq.Cons (tok, next_token (read_char lexer))
