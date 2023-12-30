@@ -56,11 +56,17 @@ let test_abc_read_more () =
 (**********************************************************************
  ** testing lexer                                                     *
  **********************************************************************)
-let test_two_assign () =
-  let expected = [ Token.Assign; Token.Assign ] in
+let test_token_equal () =
+  let expected = [ Token.EQ ] in
   let lexer = Lexer.new_lexer "==" in
   let tokens = get_all_tokens_helper lexer in
   Alcotest.(check token_list) "same tokens" expected tokens
+
+  let test_token_not_equal () =
+    let expected = [ Token.NotEQ ] in
+    let lexer = Lexer.new_lexer "!=" in
+    let tokens = get_all_tokens_helper lexer in
+    Alcotest.(check token_list) "same tokens" expected tokens
 
 let test_different_tokens () =
   let expected =
@@ -104,7 +110,8 @@ let () =
         ] );
       ( "token",
         [
-          test_case "two assigns" `Quick test_two_assign;
+          test_case "token equal" `Quick test_token_equal;
+          test_case "token not_equal" `Quick test_token_not_equal;
           test_case "different tokens" `Quick test_different_tokens;
           test_case "let un = 1;" `Quick test_let_statement;
         ] );

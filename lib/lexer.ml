@@ -20,6 +20,11 @@ let read_char (lexer : t) : t =
       read_position = lexer.read_position + 1;
     }
 
+let peek_char (lexer : t) : char =
+  if lexer.read_position >= String.length lexer.input then '\000'
+  else String.get lexer.input lexer.read_position
+
+(** Skip the whitespace *)
 let rec skip_whitespace (lexer : t) : t =
   match lexer.ch with
   | ' ' | '\t' | '\n' | '\r' -> skip_whitespace (read_char lexer)
@@ -70,7 +75,12 @@ let rec next_token (lexer : t) : Token.t Seq.t =
   let lexer = skip_whitespace lexer in
   let lexer, tok =
     match lexer.ch with
-    | '=' -> (read_char lexer, Token.Assign)
+    | '=' ->
+        if peek_char lexer = '=' then (read_char lexer |> read_char, Token.EQ)
+        else (read_char lexer, Token.Assign)
+    | '!' ->
+        if peek_char lexer = '=' then (read_char lexer |> read_char, Token.NotEQ)
+        else (read_char lexer, Token.Bang)
     | ';' -> (read_char lexer, Token.Semicolon)
     | '(' -> (read_char lexer, Token.LParen)
     | ')' -> (read_char lexer, Token.RParen)
