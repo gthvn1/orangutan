@@ -79,6 +79,14 @@ let test_different_tokens () =
   let tokens = get_all_tokens_helper lexer in
   Alcotest.(check token_list) "same tokens" expected tokens
 
+let test_let_statement () =
+  let expected =
+    [ Token.Let; Token.Ident "un"; Token.Assign; Token.Int 1; Token.Semicolon ]
+  in
+  let lexer = Lexer.new_lexer "let un = 1;" in
+  let tokens = get_all_tokens_helper lexer in
+  Alcotest.(check token_list) "same tokens" expected tokens
+
 (**********************************************************************
  ** Main                                                              *
  **********************************************************************)
@@ -98,5 +106,6 @@ let () =
         [
           test_case "two assigns" `Quick test_two_assign;
           test_case "different tokens" `Quick test_different_tokens;
+          test_case "let un = 1;" `Quick test_let_statement;
         ] );
     ]
