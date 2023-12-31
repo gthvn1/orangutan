@@ -18,5 +18,5 @@ LET IDENT(a) ASSIGN INT(10) SEMICOLON SEMICOLON
 IF IDENT(a) EQ INT(10) THEN TRUE ELSE FALSE SEMICOLON SEMICOLON
 >> q;
 May your trip be as enjoyable as finding
-extra bananas at the bottom of the bag!:was
+extra bananas at the bottom of the bag!
 ```
