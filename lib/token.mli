@@ -16,6 +16,7 @@ type t =
   | True
   | False
   | If
+  | Then
   | Else
   | Return
   | Bang

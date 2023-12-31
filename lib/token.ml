@@ -16,6 +16,7 @@ type t =
   | True
   | False
   | If
+  | Then
   | Else
   | Return
   | Bang
@@ -46,6 +47,7 @@ let pp (f : Format.formatter) (tok : t) : unit =
   | True -> Format.fprintf f "TRUE"
   | False -> Format.fprintf f "FALSE"
   | If -> Format.fprintf f "IF"
+  | Then -> Format.fprintf f "THEN"
   | Else -> Format.fprintf f "ELSE"
   | Return -> Format.fprintf f "RETURN"
   | Bang -> Format.fprintf f "BANG"

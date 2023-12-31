@@ -53,6 +53,7 @@ let read_identifier (lexer : t) : t * Token.t =
   | "true" -> (lexer, Token.True)
   | "false" -> (lexer, Token.False)
   | "if" -> (lexer, Token.If)
+  | "then" -> (lexer, Token.Then)
   | "else" -> (lexer, Token.Else)
   | "return" -> (lexer, Token.Return)
   | _ -> (lexer, Token.Ident ident)
