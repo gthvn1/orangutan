@@ -8,6 +8,12 @@ an 'O'.
 
 # Notes
 
+## Setup env
+- You can create a switch for the package
+  - `opam switch create ./ 5.1.1`
+  - `opam install dune alcotest -y`
+
+## Run repl
 - to run the repl: `dune exec orangutan`
 ``` bash
 Welcome to Monkey Islang!
