@@ -62,11 +62,11 @@ let test_token_equal () =
   let tokens = get_all_tokens_helper lexer in
   Alcotest.(check token_list) "same tokens" expected tokens
 
-  let test_token_not_equal () =
-    let expected = [ Token.NotEQ ] in
-    let lexer = Lexer.new_lexer "!=" in
-    let tokens = get_all_tokens_helper lexer in
-    Alcotest.(check token_list) "same tokens" expected tokens
+let test_token_not_equal () =
+  let expected = [ Token.NotEQ ] in
+  let lexer = Lexer.new_lexer "!=" in
+  let tokens = get_all_tokens_helper lexer in
+  Alcotest.(check token_list) "same tokens" expected tokens
 
 let test_different_tokens () =
   let expected =
