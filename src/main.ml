@@ -14,7 +14,7 @@ let rec repl () =
     F.print_flush ();
     repl ())
   else (
-    print_endline "May your trip be as enjoyable as finding";
+    print_string "May your trip be as enjoyable as finding ";
     print_endline "extra bananas at the bottom of the bag!")
 
 let () =
