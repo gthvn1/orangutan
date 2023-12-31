@@ -15,14 +15,6 @@ Type 'q;' to exit.
 >> let a = 10;;
 LET IDENT(a) ASSIGN INT(10) SEMICOLON SEMICOLON
 >> if a == 10 then true else false;;
-IF IDENT(a) EQ INT(10) IDENT(then) TRUE ELSE FALSE SEMICOLON SEMICOLON
->> q;
-May your trip be as enjoyable as finding
-extra bananas at the bottom of the bag!Welcome to Monkey Islang!
-Type 'q;' to exit.
->> let a = 10;;
-LET IDENT(a) ASSIGN INT(10) SEMICOLON SEMICOLON
->> if a == 10 then true else false;;
 IF IDENT(a) EQ INT(10) THEN TRUE ELSE FALSE SEMICOLON SEMICOLON
 >> q;
 May your trip be as enjoyable as finding
