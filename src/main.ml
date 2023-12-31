@@ -1,8 +1,17 @@
+module L = Monkey.Lexer
+module T = Monkey.Token
+module F = Format
+
 let rec repl () =
   print_string ">> ";
   let line = read_line () in
   if String.compare "q;" line <> 0 then (
-    print_endline line;
+    let lexer = L.new_lexer line in
+    L.next_token lexer
+    |> Seq.take_while (fun t -> t <> T.EOF)
+    |> Seq.iter (fun t -> F.printf "%a " T.pp t);
+    F.print_newline ();
+    F.print_flush ();
     repl ())
   else (
     print_endline "May your trip be as enjoyable as finding";

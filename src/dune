@@ -1,3 +1,4 @@
 (executable
  (public_name orangutan)
- (name main))
+ (name main)
+ (libraries monkey))
