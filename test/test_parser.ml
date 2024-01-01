@@ -31,7 +31,14 @@ let test_parser_new () =
     [ parse.cur_token; parse.peek_token ]
     [ T.Let; T.Ident "x" ]
 
-let test_parse_simple_let () =
+let test_parse_let_assign_int () =
+  let input = "let x = 12;" in
+  let lexer = L.new_lexer input in
+  let parse = P.new_parser lexer in
+  let _program = P.parse_program parse in
+  Alcotest.(check bool) "parse done" true true
+
+let test_parse_let_assign_ident () =
   let input = "let x = y;" in
   let lexer = L.new_lexer input in
   let parse = P.new_parser lexer in

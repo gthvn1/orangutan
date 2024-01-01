@@ -20,10 +20,12 @@ let () =
           test_case "different tokens" `Quick Test_lexer.test_different_tokens;
           test_case "let un = 1;" `Quick Test_lexer.test_let_statement;
         ] );
-      ( "Parser: creation",
+      ( "Parser: generic",
         [
           test_case "create parser" `Quick Test_parser.test_parser_new;
-          test_case "parsing 'let a = 5;'" `Quick
-            Test_parser.test_parse_simple_let;
+          test_case "parsing 'let a = 12;'" `Quick
+            Test_parser.test_parse_let_assign_int;
+          test_case "parsing 'let x = y;'" `Quick
+            Test_parser.test_parse_let_assign_ident;
         ] );
     ]

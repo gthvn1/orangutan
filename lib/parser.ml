@@ -32,31 +32,28 @@ and parse_stmts (parse : t) (stmts : A.Program.t) : A.Program.t =
 *)
 and parse_let_statement (parse : t) (stmts : A.Statement.t list) :
     A.Statement.t list =
+  (* First we are expecting an Identifier *)
   match parse.peek_token with
-  | T.Ident _ -> parse_let_statement_ident (next_token parse) stmts
+  | T.Ident _ -> parse_let_statement_assign (next_token parse) stmts
   | t ->
       Format.printf "Got %a\n" T.pp t;
       failwith "ERROR: Expected identifier"
 
-and parse_let_statement_ident (parse : t) (stmts : A.Statement.t list) :
-    A.Statement.t list =
-  match parse.peek_token with
-  | T.Assign -> parse_let_statement_assign (next_token parse) stmts
-  | _ -> failwith "ERROR: Expected assign"
-
 and parse_let_statement_assign (parse : t) (stmts : A.Statement.t list) :
     A.Statement.t list =
+  (* Then we are expecting an assignement *)
   match parse.peek_token with
-  | T.Ident _ -> parse_let_statement_assign_ident (next_token parse) stmts
-  | t ->
-      Format.printf "Got %a\n" T.pp t;
-      failwith "ERROR: Expected Expression"
+  | T.Assign -> parse_let_statement_expr (next_token parse) stmts
+  | _ -> failwith "ERROR: Expected assign"
 
-and parse_let_statement_assign_ident (parse : t) (stmts : A.Statement.t list) :
+and parse_let_statement_expr (parse : t) (stmts : A.Statement.t list) :
     A.Statement.t list =
-  match parse.peek_token with
-  | T.Semicolon -> parse_stmts (next_token parse |> next_token) stmts
-  (* We call next_token twice because parse_stmts checks current token so we need
-     to advance twice to have EOF under current token. Will be modified in future
-     probably.*)
-  | _ -> failwith "ERROR: Expected semicolon"
+  (* And finally we expect an expression.
+     As we don't parse expresion yet we just skip it until getting a semicolon *)
+  let rec loop (p : t) : t =
+    match p.cur_token with
+    | T.Semicolon -> next_token p
+    | _ -> loop (next_token p)
+  in
+  let parse = loop parse in
+  parse_stmts parse stmts
