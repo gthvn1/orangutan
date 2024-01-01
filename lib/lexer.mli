@@ -17,3 +17,9 @@ val read_identifier : t -> t * Token.t
 val read_number : t -> t * Token.t
 (** [read_number l] reads the next number in the input string. It returns the
     updated lexer and the Token.Int. *)
+
+val tokens_head : Token.t Seq.t -> Token.t
+(** [tokens_head tokens] returns the head of the sequence of tokens. *)
+
+val tokens_tail : Token.t Seq.t -> Token.t Seq.t
+(** [tokens_tail tokens] returns the tail of the sequence of tokens. *)

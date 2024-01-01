@@ -54,7 +54,7 @@ let test_abc_read_more () =
   Alcotest.(check char) "ch" '\000' lexer.ch
 
 (**********************************************************************
- ** testing lexer                                                     *
+ ** testing token                                                     *
  **********************************************************************)
 let test_token_equal () =
   let expected = [ Token.EQ ] in
@@ -67,6 +67,24 @@ let test_token_not_equal () =
   let lexer = Lexer.new_lexer "!=" in
   let tokens = get_all_tokens_helper lexer in
   Alcotest.(check token_list) "same tokens" expected tokens
+
+let test_get_first_token () =
+  let expected = [ Token.Let ] in
+  let lexer = Lexer.new_lexer "let a = 10" in
+  let token_seq = Lexer.next_token lexer in
+  let first_token = Lexer.tokens_head @@ token_seq in
+  Alcotest.(check token_list) "same tokens" expected [ first_token ]
+
+let test_get_first_two_tokens () =
+  let expected = [ Token.Let; Token.Ident "a" ] in
+  let lexer = Lexer.new_lexer "let a = 10" in
+  let token_seq = Lexer.next_token lexer in
+  let first_token = Lexer.tokens_head token_seq in
+  let token_seq = Lexer.tokens_tail token_seq in
+  let second_token = Lexer.tokens_head token_seq in
+  Alcotest.(check token_list)
+    "same tokens" expected
+    [ first_token; second_token ]
 
 let test_different_tokens () =
   let expected =

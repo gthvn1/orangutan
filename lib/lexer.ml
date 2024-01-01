@@ -101,3 +101,9 @@ let rec next_token (lexer : t) : Token.t Seq.t =
         else (read_char lexer, Token.Illegal)
   in
   fun () -> Seq.Cons (tok, next_token lexer)
+
+let tokens_head (tokens : Token.t Seq.t) : Token.t =
+  match tokens () with Seq.Cons (tok, _) -> tok | Nil -> Token.EOF
+
+let tokens_tail (tokens : Token.t Seq.t) : Token.t Seq.t =
+  match tokens () with Seq.Cons (_, tl) -> tl | Nil -> failwith "empty tokens"
