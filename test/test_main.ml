@@ -21,5 +21,9 @@ let () =
           test_case "let un = 1;" `Quick Test_lexer.test_let_statement;
         ] );
       ( "Parser: creation",
-        [ test_case "create parser" `Quick Test_parser.test_parser_new ] );
+        [
+          test_case "create parser" `Quick Test_parser.test_parser_new;
+          test_case "parsing 'let a = 5;'" `Quick
+            Test_parser.test_parse_simple_let;
+        ] );
     ]

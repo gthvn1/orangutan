@@ -107,3 +107,6 @@ let tokens_hd (toks : Token.t Seq.t) : Token.t =
 
 let tokens_tl (toks : Token.t Seq.t) : Token.t Seq.t =
   match toks () with Seq.Cons (_, tl) -> tl | Nil -> Seq.empty
+
+let next_token (toks : Token.t Seq.t) : Token.t * Token.t Seq.t =
+  (tokens_hd toks, tokens_tl toks)
