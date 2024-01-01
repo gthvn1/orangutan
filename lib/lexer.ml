@@ -72,7 +72,7 @@ let read_number (lexer : t) : t * Token.t =
   (lexer, Token.Int (int_of_string num))
 
 (** We want to provide a Sequence of Tokens *)
-let rec next_token (lexer : t) : Token.t Seq.t =
+let rec tokens (lexer : t) : Token.t Seq.t =
   let lexer = skip_whitespace lexer in
   let lexer, tok =
     match lexer.ch with
@@ -100,10 +100,10 @@ let rec next_token (lexer : t) : Token.t Seq.t =
         else if is_digit lexer.ch then read_number lexer
         else (read_char lexer, Token.Illegal)
   in
-  fun () -> Seq.Cons (tok, next_token lexer)
+  fun () -> Seq.Cons (tok, tokens lexer)
 
-let tokens_head (tokens : Token.t Seq.t) : Token.t =
-  match tokens () with Seq.Cons (tok, _) -> tok | Nil -> Token.EOF
+let tokens_hd (toks : Token.t Seq.t) : Token.t =
+  match toks () with Seq.Cons (tok, _) -> tok | Nil -> Token.EOF
 
-let tokens_tail (tokens : Token.t Seq.t) : Token.t Seq.t =
-  match tokens () with Seq.Cons (_, tl) -> tl | Nil -> failwith "empty tokens"
+let tokens_tl (toks : Token.t Seq.t) : Token.t Seq.t =
+  match toks () with Seq.Cons (_, tl) -> tl | Nil -> Seq.empty

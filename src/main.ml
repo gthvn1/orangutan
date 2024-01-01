@@ -7,7 +7,7 @@ let rec repl () =
   let line = read_line () in
   if String.compare "q;" line <> 0 then (
     let lexer = L.new_lexer line in
-    L.next_token lexer
+    L.tokens lexer
     |> Seq.take_while (fun t -> t <> T.EOF)
     |> Seq.iter (fun t -> F.printf "%a " T.pp t);
     F.print_newline ();

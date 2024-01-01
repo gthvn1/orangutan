@@ -19,9 +19,7 @@ let token_list =
   (module M : Alcotest.TESTABLE with type t = M.t)
 
 let get_all_tokens_helper lexer =
-  Lexer.next_token lexer
-  |> Seq.take_while (fun t -> t != Token.EOF)
-  |> List.of_seq
+  Lexer.tokens lexer |> Seq.take_while (fun t -> t != Token.EOF) |> List.of_seq
 
 (**********************************************************************
  ** testing read character                                            *
@@ -71,17 +69,17 @@ let test_token_not_equal () =
 let test_get_first_token () =
   let expected = [ Token.Let ] in
   let lexer = Lexer.new_lexer "let a = 10" in
-  let token_seq = Lexer.next_token lexer in
-  let first_token = Lexer.tokens_head @@ token_seq in
+  let token_seq = Lexer.tokens lexer in
+  let first_token = Lexer.tokens_hd @@ token_seq in
   Alcotest.(check token_list) "same tokens" expected [ first_token ]
 
 let test_get_first_two_tokens () =
   let expected = [ Token.Let; Token.Ident "a" ] in
   let lexer = Lexer.new_lexer "let a = 10" in
-  let token_seq = Lexer.next_token lexer in
-  let first_token = Lexer.tokens_head token_seq in
-  let token_seq = Lexer.tokens_tail token_seq in
-  let second_token = Lexer.tokens_head token_seq in
+  let token_seq = Lexer.tokens lexer in
+  let first_token = Lexer.tokens_hd token_seq in
+  let token_seq = Lexer.tokens_tl token_seq in
+  let second_token = Lexer.tokens_hd token_seq in
   Alcotest.(check token_list)
     "same tokens" expected
     [ first_token; second_token ]
