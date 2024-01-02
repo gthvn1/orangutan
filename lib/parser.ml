@@ -2,25 +2,21 @@ module A = Ast
 module L = Lexer
 module T = Token
 
-type t = { tokens : T.t Seq.t; cur_token : T.t; peek_token : T.t }
+type t = T.t * T.t Seq.t
 
 let new_parser (l : L.t) : t =
   let toks = L.tokens l in
-  let cur_token, toks = L.next_token toks in
-  let peek_token, toks = L.next_token toks in
-  { tokens = toks; cur_token; peek_token }
+  L.next_token toks
 
-let next_token (parse : t) : t =
-  let parse = { parse with cur_token = parse.peek_token } in
-  let peek_token, tokens = L.next_token parse.tokens in
-  { parse with peek_token; tokens }
+let next_token (parse : t) : t = L.next_token @@ snd parse
+let peek_token (parse : t) : T.t = parse |> snd |> L.tokens_hd
 
 (* Entry point to parse program *)
 let rec parse_program (parse : t) : A.Program.t = parse_stmts parse []
 
 (* STATEMENTS *)
 and parse_stmts (parse : t) (stmts : A.Program.t) : A.Program.t =
-  match parse.cur_token with
+  match fst parse with
   | T.EOF -> List.rev stmts
   | T.Let -> parse_let_statement parse stmts
   | t ->
@@ -33,7 +29,7 @@ and parse_stmts (parse : t) (stmts : A.Program.t) : A.Program.t =
 and parse_let_statement (parse : t) (stmts : A.Statement.t list) :
     A.Statement.t list =
   (* First we are expecting an Identifier *)
-  match parse.peek_token with
+  match peek_token parse with
   | T.Ident _ -> parse_let_statement_assign (next_token parse) stmts
   | t ->
       Format.printf "Got %a\n" T.pp t;
@@ -42,7 +38,7 @@ and parse_let_statement (parse : t) (stmts : A.Statement.t list) :
 and parse_let_statement_assign (parse : t) (stmts : A.Statement.t list) :
     A.Statement.t list =
   (* Then we are expecting an assignement *)
-  match parse.peek_token with
+  match peek_token parse with
   | T.Assign -> parse_let_statement_expr (next_token parse) stmts
   | _ -> failwith "ERROR: Expected assign"
 
@@ -51,9 +47,7 @@ and parse_let_statement_expr (parse : t) (stmts : A.Statement.t list) :
   (* And finally we expect an expression.
      As we don't parse expresion yet we just skip it until getting a semicolon *)
   let rec loop (p : t) : t =
-    match p.cur_token with
-    | T.Semicolon -> next_token p
-    | _ -> loop (next_token p)
+    match fst p with T.Semicolon -> next_token p | _ -> loop (next_token p)
   in
   let parse = loop parse in
   parse_stmts parse stmts

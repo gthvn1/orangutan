@@ -18,5 +18,8 @@ val read_number : t -> t * Token.t
 val tokens : t -> Token.t Seq.t
 (** [tokens lexer] returns a sequence of tokens for a given [lexer]. *)
 
+val tokens_hd : Token.t Seq.t -> Token.t
+(** [tokens_hd toks] returns the first token in the sequence of tokens. *)
+
 val next_token : Token.t Seq.t -> Token.t * Token.t Seq.t
 (** [next_token toks] returns the next token and the updated sequence of tokens. *)

@@ -28,7 +28,7 @@ let test_parser_new () =
   let parse = P.new_parser lexer in
   Alcotest.(check token_list)
     "test create of parser"
-    [ parse.cur_token; parse.peek_token ]
+    [ fst parse; P.peek_token parse ]
     [ T.Let; T.Ident "x" ]
 
 let test_parse_let_assign_int () =
