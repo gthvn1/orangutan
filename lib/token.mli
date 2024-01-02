@@ -28,4 +28,5 @@ type t =
   | EQ
   | NotEQ
 
+val to_string : t -> string
 val pp : Format.formatter -> t -> unit

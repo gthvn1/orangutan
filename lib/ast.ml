@@ -1,5 +1,5 @@
 module Expression = struct
-  type t
+  type t = ToDo
 end
 
 type identifier = { token : Token.t; value : string }
@@ -18,7 +18,7 @@ module Statement = struct
 end
 
 module Program = struct
-  type t = Statement.t list
+  type t = { stmts : Statement.t list; errors : string list }
 
   let token_literal _p : string = failwith "token literal not implemented"
 end
