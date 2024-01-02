@@ -23,9 +23,8 @@ let parse_let_statement_expr (parse : t) (ident : A.identifier) :
   let rec loop (p : t) : t =
     match fst p with T.Semicolon -> next_token p | _ -> loop (next_token p)
   in
-  let parse = loop parse in
   Ok
-    ( parse,
+    ( loop parse,
       A.Statement.Let { token = T.Let; name = ident; value = A.Expression.ToDo }
     )
 
@@ -49,6 +48,7 @@ let parse_let_statement (parse : t) : (t * A.Statement.t, string) result =
 let parse_program (parse : t) : A.Program.t =
   let prog : A.Program.t = { stmts = []; errors = [] } in
   let rec parse_stmts (parse : t) (prog : A.Program.t) : A.Program.t =
+    print_endline ("[Debug] Parsing: " ^ T.to_string @@ fst parse);
     if fst parse = T.EOF then
       { stmts = List.rev prog.stmts; errors = List.rev prog.errors }
     else
