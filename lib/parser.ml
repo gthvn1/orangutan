@@ -14,14 +14,17 @@ let next_token (parse : t) : t = L.next_token @@ snd parse
 let peek_token (parse : t) : T.t = parse |> snd |> L.tokens_hd
 
 (*****************************************************************************)
-(* LET STATEMENT  LET <IDENT> = <EXPR> ;                                     *)
+(* LET STATEMENT:  LET <IDENT> = <EXPR> ;                                    *)
 (*****************************************************************************)
 let parse_let_statement_expr (parse : t) (ident : A.identifier) :
     (t * A.Statement.t, string) result =
   (* And finally we expect an expression. As we don't parse expresion yet we
-     just skip it until getting a semicolon *)
+     just skip it until getting a semicolon or EOF *)
   let rec loop (p : t) : t =
-    match fst p with T.Semicolon -> next_token p | _ -> loop (next_token p)
+    match fst p with
+    | T.Semicolon -> next_token p
+    | T.EOF -> p (* once EOF reached next_token will be also EOF *)
+    | _ -> loop (next_token p)
   in
   Ok
     ( loop parse,
@@ -43,6 +46,22 @@ let parse_let_statement (parse : t) : (t * A.Statement.t, string) result =
   | t -> Error ("Expected identifier, got " ^ T.to_string t)
 
 (*****************************************************************************)
+(* RETURN STATEMENT:  RETURN <EXPR> ;                                        *)
+(*****************************************************************************)
+let parse_return_statement (parse : t) : (t * A.Statement.t, string) result =
+  (* we are expecting an expression. As we don't parse them for the moment
+     just skip tokens until reaching a semicolon or the EOF. *)
+  let rec loop (p : t) : t =
+    match fst p with
+    | T.Semicolon -> next_token p
+    | T.EOF -> p (* once EOF reached next_token will be also EOF *)
+    | _ -> loop (next_token p)
+  in
+  Ok
+    ( loop (next_token parse),
+      A.Statement.Return { token = T.Return; value = A.Expression.ToDo } )
+
+(*****************************************************************************)
 (* Entry point to parse program                                              *)
 (*****************************************************************************)
 let parse_program (parse : t) : A.Program.t =
@@ -55,6 +74,7 @@ let parse_program (parse : t) : A.Program.t =
       let parsed_stmt =
         match fst parse with
         | T.Let -> parse_let_statement parse
+        | T.Return -> parse_return_statement parse
         | t -> Error ("Parsing " ^ T.to_string t ^ " is not yet supported.")
       in
       match parsed_stmt with

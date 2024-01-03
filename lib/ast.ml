@@ -1,3 +1,5 @@
+module T = Token
+
 module Expression = struct
   type t = ToDo
 end
@@ -12,9 +14,9 @@ module Statement = struct
 
   let token_literal s : string =
     match s with
-    | Let _l -> failwith "token literal for let not implemented"
-    | Return _r -> failwith "token literal for return not implemented"
-    | Expr _e -> failwith "token literal for expression not implemented"
+    | Let l -> T.to_string l.token
+    | Return r -> T.to_string r.token
+    | Expr e -> T.to_string e.token
 end
 
 module Program = struct

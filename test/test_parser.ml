@@ -35,15 +35,17 @@ let test_parse_let_assign_int () =
   let input = "let x = 12;" in
   let lexer = L.new_lexer input in
   let parse = P.new_parser lexer in
-  let _program = P.parse_program parse in
-  Alcotest.(check bool) "parse done" true true
+  let program = P.parse_program parse in
+  Alcotest.(check int) "check 1 stmts" (List.length program.stmts) 1;
+  Alcotest.(check int) "check no errors" (List.length program.errors) 0
 
 let test_parse_let_assign_ident () =
   let input = "let x = y;" in
   let lexer = L.new_lexer input in
   let parse = P.new_parser lexer in
-  let _program = P.parse_program parse in
-  Alcotest.(check bool) "parse done" true true
+  let program = P.parse_program parse in
+  Alcotest.(check int) "check 1 stmts" (List.length program.stmts) 1;
+  Alcotest.(check int) "check no errors" (List.length program.errors) 0
 
 let test_parse_three_let () =
   let input = "let x = 5; let y = 10; let foobar = 838383;" in
@@ -51,4 +53,12 @@ let test_parse_three_let () =
   let parse = P.new_parser lexer in
   let program = P.parse_program parse in
   Alcotest.(check int) "check 3 stmts" (List.length program.stmts) 3;
+  Alcotest.(check int) "check no errors" (List.length program.errors) 0
+
+let test_parse_return () =
+  let input = "return true;" in
+  let lexer = L.new_lexer input in
+  let parse = P.new_parser lexer in
+  let program = P.parse_program parse in
+  Alcotest.(check int) "check 1 stmts" (List.length program.stmts) 1;
   Alcotest.(check int) "check no errors" (List.length program.errors) 0

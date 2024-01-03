@@ -29,5 +29,7 @@ let () =
             Test_parser.test_parse_let_assign_ident;
           test_case "parsing 3 let statements" `Quick
             Test_parser.test_parse_three_let;
+          test_case "parsing return statement" `Quick
+            Test_parser.test_parse_return;
         ] );
     ]
