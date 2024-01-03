@@ -23,42 +23,31 @@ let get_all_tokens_helper lexer =
   L.tokens lexer |> Seq.take_while (fun t -> t != T.EOF) |> List.of_seq
 
 let test_parser_new () =
-  let input = "let x = 5;" in
-  let lexer = L.new_lexer input in
-  let parse = P.new_parser lexer in
+  let p = "let x = 5;" |> L.new_lexer |> P.new_parser in
   Alcotest.(check token_list)
     "test create of parser"
-    [ fst parse; P.peek_token parse ]
+    [ fst p; P.peek_token p ]
     [ T.Let; T.Ident "x" ]
 
 let test_parse_let_assign_int () =
-  let input = "let x = 12;" in
-  let lexer = L.new_lexer input in
-  let parse = P.new_parser lexer in
-  let program = P.parse_program parse in
-  Alcotest.(check int) "check 1 stmts" (List.length program.stmts) 1;
-  Alcotest.(check int) "check no errors" (List.length program.errors) 0
+  let prog = "let x = 12;" |> L.new_lexer |> P.new_parser |> P.parse_program in
+  Alcotest.(check int) "check 1 stmts" (List.length prog.stmts) 1;
+  Alcotest.(check int) "check no errors" (List.length prog.errors) 0
 
 let test_parse_let_assign_ident () =
-  let input = "let x = y;" in
-  let lexer = L.new_lexer input in
-  let parse = P.new_parser lexer in
-  let program = P.parse_program parse in
-  Alcotest.(check int) "check 1 stmts" (List.length program.stmts) 1;
-  Alcotest.(check int) "check no errors" (List.length program.errors) 0
+  let prog = "let x = y;" |> L.new_lexer |> P.new_parser |> P.parse_program in
+  Alcotest.(check int) "check 1 stmts" (List.length prog.stmts) 1;
+  Alcotest.(check int) "check no errors" (List.length prog.errors) 0
 
 let test_parse_three_let () =
-  let input = "let x = 5; let y = 10; let foobar = 838383;" in
-  let lexer = L.new_lexer input in
-  let parse = P.new_parser lexer in
-  let program = P.parse_program parse in
-  Alcotest.(check int) "check 3 stmts" (List.length program.stmts) 3;
-  Alcotest.(check int) "check no errors" (List.length program.errors) 0
+  let prog =
+    "let x = 5; let y = 10; let foobar = 838383;" |> L.new_lexer |> P.new_parser
+    |> P.parse_program
+  in
+  Alcotest.(check int) "check 3 stmts" (List.length prog.stmts) 3;
+  Alcotest.(check int) "check no errors" (List.length prog.errors) 0
 
 let test_parse_return () =
-  let input = "return true;" in
-  let lexer = L.new_lexer input in
-  let parse = P.new_parser lexer in
-  let program = P.parse_program parse in
-  Alcotest.(check int) "check 1 stmts" (List.length program.stmts) 1;
-  Alcotest.(check int) "check no errors" (List.length program.errors) 0
+  let prog = "return true;" |> L.new_lexer |> P.new_parser |> P.parse_program in
+  Alcotest.(check int) "check 1 stmts" (List.length prog.stmts) 1;
+  Alcotest.(check int) "check no errors" (List.length prog.errors) 0
