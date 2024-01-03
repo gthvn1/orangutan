@@ -1,2 +1,5 @@
-#directory "_build/default/lib/.monkey.objs/byte";;
-#load "monkey__Lexer.cmo";;
+open Monkey;;
+
+module T = Monkey.Token;;
+module L = Monkey.Lexer;;
+module P = Monkey.Parser;;
