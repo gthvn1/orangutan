@@ -24,20 +24,16 @@ let peek_char (lexer : t) : char =
   if lexer.read_position >= String.length lexer.input then '\000'
   else String.get lexer.input lexer.read_position
 
-(** Skip the whitespace *)
 let rec skip_whitespace (lexer : t) : t =
   match lexer.ch with
   | ' ' | '\t' | '\n' | '\r' -> skip_whitespace (read_char lexer)
   | _ -> lexer
 
-(** Identifier supports ascii and '_' *)
 let is_letter (ch : char) : bool =
   ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch = '_'
 
 let is_digit (ch : char) : bool = '0' <= ch && ch <= '9'
 
-(** Read identifier starting from current character. It returns the keywords
-    if it is a keyword, otherwise it returns the Ident token *)
 let read_identifier (lexer : t) : t * Token.t =
   let start_pos = lexer.read_position - 1 in
   let rec aux (lexer : t) : t =
@@ -58,8 +54,6 @@ let read_identifier (lexer : t) : t * Token.t =
   | "return" -> (lexer, Token.Return)
   | _ -> (lexer, Token.Ident ident)
 
-(** Read the number starting from current character. It returns the Int
-    token with its value in base 10. *)
 let read_number (lexer : t) : t * Token.t =
   let start_pos = lexer.read_position - 1 in
   let rec aux (lexer : t) : t =

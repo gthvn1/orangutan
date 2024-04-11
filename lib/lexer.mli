@@ -9,7 +9,8 @@ val read_char : t -> t
 
 val read_identifier : t -> t * Token.t
 (** [read_identifier l] reads the identifier in the input string. It returns the
-    updated lexer and the corresponding token. *)
+    updated lexer and the corresponding token. It supports ascii character and
+    '_'. *)
 
 val read_number : t -> t * Token.t
 (** [read_number l] reads the next number in the input string. It returns the
