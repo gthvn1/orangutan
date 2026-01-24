@@ -5,3 +5,8 @@ and Orangutans are splendid great apes native to the verdant rain-forests of
 Indonesia and Malaysia. Being engrossed in yonder task of writing an interpreter
 of Monkey Lang in OCaml, it was natural to select a primate whose appellation doth
 starts with an 'O'.
+
+ ```sh
+ ❯ dune exec orangutan
+Hello
+ ```
