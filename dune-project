@@ -3,4 +3,5 @@
 
 (package
  (name orangutan)
- (synopsis "An compiler of Monkey lang in OCaml"))
+ (synopsis "An compiler of Monkey lang in OCaml")
+ (depends alcotest))
