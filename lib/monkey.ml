@@ -1,4 +1,19 @@
-(** [add x y] just adds two numbers. It is to check with alcotest. *)
-let add x y = x + y
+type token_type =
+  | Assign
+  | Plus
+  | Lparen
+  | Rparen
+  | Lbrace
+  | Rbrace
+  | Comma
+  | Semicolon
+  | Eof
 
-let hello () = print_endline "Jello from REPL"
+type token = { ty : token_type; literal : string }
+
+module Lexer = struct
+  type t = { input : string }
+
+  let create (input : string) : t = { input }
+  let next_token (_lexer : t) : token = failwith "todo"
+end
