@@ -1,1 +1,1 @@
-let () = print_endline "Hello, Sailor!"
+let () = Monkey.Repl.start ()

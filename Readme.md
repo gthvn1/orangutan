@@ -7,11 +7,7 @@ Being engrossed in yonder task of writing an interpreter of Monkey Lang in
 OCaml, it was natural to select a primate whose appellation doth starts with
 an 'O'.
 
-- Run:
-```sh
-❯ dune exec orangutan
-Hello, Sailor!
- ```
+- Run: `dune exec orangutan`
 
 - Test: `dune runtest`
 
