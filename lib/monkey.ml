@@ -40,5 +40,22 @@ module Lexer = struct
     let init_state = { input; position = 0; read_position = 0; ch = '\000' } in
     read_char init_state
 
-  let next_token (_lexer : t) : token = failwith "todo"
+  let next_token (lexer : t) : token * t =
+    let new_token (tt : token_type) : token =
+      { ty = tt; literal = String.make 1 lexer.ch }
+    in
+    let tok =
+      match lexer.ch with
+      | '=' -> new_token Assign
+      | ';' -> new_token Semicolon
+      | '(' -> new_token Lparen
+      | ')' -> new_token Rparen
+      | ',' -> new_token Comma
+      | '+' -> new_token Plus
+      | '{' -> new_token Lbrace
+      | '}' -> new_token Rbrace
+      | '\000' -> { ty = Eof; literal = "" }
+      | _ -> failwith "char not recognized"
+    in
+    (tok, read_char lexer)
 end

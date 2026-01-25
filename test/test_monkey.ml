@@ -46,7 +46,7 @@ let test_read_char () =
   |> read_and_check ~str:"next read" ~car:'\000'
   |> ignore
 
-let _test_next_token () =
+let test_next_token () =
   let input = "=+(){},;" in
   let expected =
     [
@@ -62,12 +62,16 @@ let _test_next_token () =
     ]
   in
   let lexer = Monkey.Lexer.create input in
-  List.iter
-    (fun (tt, lit) ->
-      let tok = Monkey.Lexer.next_token lexer in
-      Alcotest.check token_type "same token type" tt tok.ty;
-      Alcotest.check Alcotest.string "same literal" lit tok.literal)
-    expected
+  let rec aux l e =
+    let tok, new_lexer = Monkey.Lexer.next_token l in
+    match e with
+    | [] -> ()
+    | (tt, lit) :: xs ->
+        Alcotest.check token_type "same token type" tt tok.ty;
+        Alcotest.check Alcotest.string "same literal" lit tok.literal;
+        aux new_lexer xs
+  in
+  aux lexer expected
 
 let () =
   let open Alcotest in
@@ -75,6 +79,5 @@ let () =
     [
       ("create-lexer", [ test_case "Create a lexer" `Quick test_create_lexer ])
     ; ("read-char", [ test_case "Read chars" `Quick test_read_char ])
-      (* ("next-token", [ test_case "Simple tokens" `Quick test_next_token ]) ;
-*)
+    ; ("next-token", [ test_case "Simple tokens" `Quick test_next_token ])
     ]
