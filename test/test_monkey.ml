@@ -1,5 +1,5 @@
 let pp_token_type fmt tt =
-  let open Monkey in
+  let open Monkey.Token in
   Format.fprintf fmt "%s"
     (match tt with
     | Assign -> "Assign"
@@ -11,7 +11,11 @@ let pp_token_type fmt tt =
     | Comma -> "Comma"
     | Semicolon -> "Semicolon"
     | Eof -> "Eof"
-    | _ -> failwith "Need to add the token")
+    | Let -> "Let"
+    | Ident -> "Ident"
+    | Illegal -> "Illegal"
+    | Int -> "Int"
+    | Function -> "Function")
 
 let token_type = Alcotest.testable pp_token_type ( = )
 
@@ -48,18 +52,19 @@ let test_read_char () =
   |> ignore
 
 let test_next_simple_tokens () =
+  let open Monkey.Token in
   let input = "=+(){},;" in
   let expected =
     [
-      (Monkey.Assign, "=")
-    ; (Monkey.Plus, "+")
-    ; (Monkey.Lparen, "(")
-    ; (Monkey.Rparen, ")")
-    ; (Monkey.Lbrace, "{")
-    ; (Monkey.Rbrace, "}")
-    ; (Monkey.Comma, ",")
-    ; (Monkey.Semicolon, ";")
-    ; (Monkey.Eof, "")
+      (Assign, "=")
+    ; (Plus, "+")
+    ; (Lparen, "(")
+    ; (Rparen, ")")
+    ; (Lbrace, "{")
+    ; (Rbrace, "}")
+    ; (Comma, ",")
+    ; (Semicolon, ";")
+    ; (Eof, "")
     ]
   in
   let lexer = Monkey.Lexer.create input in
@@ -87,45 +92,46 @@ let add = fn(x, y) {
 let result = add(five,ten);
 |}
   in
+  let open Monkey.Token in
   let expected =
     [
-      (Monkey.Let, "let")
-    ; (Monkey.Ident, "five")
-    ; (Monkey.Assign, "=")
-    ; (Monkey.Int, "5")
-    ; (Monkey.Semicolon, ";")
-    ; (Monkey.Let, "let")
-    ; (Monkey.Ident, "ten")
-    ; (Monkey.Assign, "=")
-    ; (Monkey.Int, "10")
-    ; (Monkey.Semicolon, ";")
-    ; (Monkey.Let, "let")
-    ; (Monkey.Ident, "add")
-    ; (Monkey.Assign, "=")
-    ; (Monkey.Function, "fn")
-    ; (Monkey.Lparen, "(")
-    ; (Monkey.Ident, "x")
-    ; (Monkey.Comma, ",")
-    ; (Monkey.Ident, "y")
-    ; (Monkey.Rparen, ")")
-    ; (Monkey.Lbrace, "{")
-    ; (Monkey.Ident, "x")
-    ; (Monkey.Plus, "+")
-    ; (Monkey.Ident, "y")
-    ; (Monkey.Semicolon, ";")
-    ; (Monkey.Rbrace, "}")
-    ; (Monkey.Semicolon, ";")
-    ; (Monkey.Let, "let")
-    ; (Monkey.Ident, "result")
-    ; (Monkey.Assign, "=")
-    ; (Monkey.Ident, "add")
-    ; (Monkey.Lparen, "(")
-    ; (Monkey.Ident, "five")
-    ; (Monkey.Comma, ",")
-    ; (Monkey.Ident, "ten")
-    ; (Monkey.Rparen, ")")
-    ; (Monkey.Semicolon, ";")
-    ; (Monkey.Eof, "")
+      (Let, "let")
+    ; (Ident, "five")
+    ; (Assign, "=")
+    ; (Int, "5")
+    ; (Semicolon, ";")
+    ; (Let, "let")
+    ; (Ident, "ten")
+    ; (Assign, "=")
+    ; (Int, "10")
+    ; (Semicolon, ";")
+    ; (Let, "let")
+    ; (Ident, "add")
+    ; (Assign, "=")
+    ; (Function, "fn")
+    ; (Lparen, "(")
+    ; (Ident, "x")
+    ; (Comma, ",")
+    ; (Ident, "y")
+    ; (Rparen, ")")
+    ; (Lbrace, "{")
+    ; (Ident, "x")
+    ; (Plus, "+")
+    ; (Ident, "y")
+    ; (Semicolon, ";")
+    ; (Rbrace, "}")
+    ; (Semicolon, ";")
+    ; (Let, "let")
+    ; (Ident, "result")
+    ; (Assign, "=")
+    ; (Ident, "add")
+    ; (Lparen, "(")
+    ; (Ident, "five")
+    ; (Comma, ",")
+    ; (Ident, "ten")
+    ; (Rparen, ")")
+    ; (Semicolon, ";")
+    ; (Eof, "")
     ]
   in
   let lexer = Monkey.Lexer.create input in
