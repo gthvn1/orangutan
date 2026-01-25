@@ -14,3 +14,7 @@ Hello, Sailor!
  ```
 
 - Test: `dune runtest`
+
+# State
+
+- We are at page 15/210 of "Writing An Interpreter In Go"

@@ -21,10 +21,6 @@ module Lexer = struct
     ; ch : char  (** current char under examination *)
   }
 
-  (** [create input] returns a lexer initialized with string [input] *)
-  let create (input : string) : t =
-    { input; position = 0; read_position = 0; ch = '\000' }
-
   (** [read_char lexer] returns a new lexer where field "ch" is set with the new
       character. The new lexer has the new position. *)
   let read_char (lexer : t) : t =
@@ -37,6 +33,12 @@ module Lexer = struct
       ; read_position = lexer.read_position + 1
       ; ch = lexer.input.[lexer.read_position]
       }
+
+  (** [create input] returns a lexer initialized with string [input]. It returns
+      a fully working state. *)
+  let create (input : string) : t =
+    let init_state = { input; position = 0; read_position = 0; ch = '\000' } in
+    read_char init_state
 
   let next_token (_lexer : t) : token = failwith "todo"
 end

@@ -16,11 +16,12 @@ let token_type = Alcotest.testable pp_token_type ( = )
 
 let test_create_lexer () =
   let open Alcotest in
-  let new_lexer = Monkey.Lexer.create "abc" in
-  check string "input" "abc" new_lexer.input;
+  let input = "hello" in
+  let new_lexer = Monkey.Lexer.create input in
+  check string "input" input new_lexer.input;
   check int "position" 0 new_lexer.position;
-  check int "read position" 0 new_lexer.read_position;
-  check char "ch" '\000' new_lexer.ch
+  check int "read position" 1 new_lexer.read_position;
+  check char "ch" 'h' new_lexer.ch
 
 let test_read_char () =
   let open Monkey in
@@ -30,12 +31,19 @@ let test_read_char () =
     check char str car new_lexer.ch;
     new_lexer
   in
-  Lexer.create "abc"
-  |> read_and_check ~str:"first read" ~car:'a'
-  |> read_and_check ~str:"second read" ~car:'b'
-  |> read_and_check ~str:"third read" ~car:'c'
-  |> read_and_check ~str:"fourth read" ~car:'\000'
-  |> read_and_check ~str:"fifth read" ~car:'\000'
+  let input = "abc" in
+  (let l = Lexer.create input in
+   (* Here l.ch should be set to 'a' and read position is point to b. It is
+     the first valid state already checked in test_create_lexer. So next
+     read should give 'b', next should give 'c' and so on *)
+   check string "input" input l.input;
+   check int "position" 0 l.position;
+   check int "read position" 1 l.read_position;
+   check char "ch" 'a' l.ch;
+   read_and_check ~str:"next read" ~car:'b' l)
+  |> read_and_check ~str:"next read" ~car:'c'
+  |> read_and_check ~str:"next read" ~car:'\000'
+  |> read_and_check ~str:"next read" ~car:'\000'
   |> ignore
 
 let _test_next_token () =
