@@ -40,7 +40,7 @@ let read_char (lexer : t) : t =
     ; ch
     }
   in
-  debug_lexer "read_char (before returning)" next_lexer_state;
+  debug_lexer "read_char" next_lexer_state;
   next_lexer_state
 
 (** [skip_whitespace lexer] returns the lexer after skipping white spaces. *)
@@ -70,26 +70,26 @@ let read_identifier (lexer : t) : string * t =
     lexer. It raises an expection if something goes wrong. *)
 let next_token (lexer : t) : Token.t * t =
   debug_lexer "next_token (start)" lexer;
-  let new_token (tt : Token.token_type) : Token.t =
-    { ty = tt; literal = String.make 1 lexer.ch }
+  let new_token (ch : char) (tt : Token.token_type) : Token.t =
+    { ty = tt; literal = String.make 1 ch }
   in
-  let lexer = skip_whitespace lexer in
-  debug_lexer "next_token (after skip_whitespace)" lexer;
-  match lexer.ch with
-  | '=' -> (new_token Assign, read_char lexer)
-  | ';' -> (new_token Semicolon, read_char lexer)
-  | '(' -> (new_token Lparen, read_char lexer)
-  | ')' -> (new_token Rparen, read_char lexer)
-  | ',' -> (new_token Comma, read_char lexer)
-  | '+' -> (new_token Plus, read_char lexer)
-  | '{' -> (new_token Lbrace, read_char lexer)
-  | '}' -> (new_token Rbrace, read_char lexer)
-  | '\000' -> ({ ty = Eof; literal = "" }, lexer)
+  let next_lexer = skip_whitespace lexer in
+  debug_lexer "next_token (after skip_whitespace)" next_lexer;
+  match next_lexer.ch with
+  | '=' -> (new_token next_lexer.ch Assign, read_char next_lexer)
+  | ';' -> (new_token next_lexer.ch Semicolon, read_char next_lexer)
+  | '(' -> (new_token next_lexer.ch Lparen, read_char next_lexer)
+  | ')' -> (new_token next_lexer.ch Rparen, read_char next_lexer)
+  | ',' -> (new_token next_lexer.ch Comma, read_char next_lexer)
+  | '+' -> (new_token next_lexer.ch Plus, read_char next_lexer)
+  | '{' -> (new_token next_lexer.ch Lbrace, read_char next_lexer)
+  | '}' -> (new_token next_lexer.ch Rbrace, read_char next_lexer)
+  | '\000' -> ({ ty = Eof; literal = "" }, next_lexer)
   | c ->
       if is_letter c then
-        let ident_str, new_lexer = read_identifier lexer in
+        let ident_str, new_lexer = read_identifier next_lexer in
         let ident_type = Token.lookup_ident ident_str in
         ({ ty = ident_type; literal = ident_str }, new_lexer)
       else (
         Printf.eprintf "Error: char <%C> not recognized\n" c;
-        (new_token Illegal, read_char lexer))
+        (new_token c Illegal, read_char next_lexer))
