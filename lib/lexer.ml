@@ -1,9 +1,7 @@
-module Helper = struct
-  (** [is_letter ch] returns true if [ch] is a letter. '_' is a valid letter. It
-      returns false otherwise. *)
-  let is_letter ch =
-    ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch = '_'
-end
+(** [is_letter ch] returns true if [ch] is a letter. '_' is a valid letter. It
+    returns false otherwise. *)
+let is_letter ch =
+  ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch = '_'
 
 type t = {
     input : string
@@ -55,7 +53,7 @@ let next_token (lexer : t) : Token.t * t =
   | '}' -> (new_token Rbrace, read_char lexer)
   | '\000' -> ({ ty = Eof; literal = "" }, lexer)
   | c ->
-      if Helper.is_letter c then
+      if is_letter c then
         let literal, new_lexer = read_identifier lexer in
         ({ ty = Ident; literal }, new_lexer)
       else (
