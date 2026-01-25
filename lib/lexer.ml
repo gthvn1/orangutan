@@ -61,27 +61,27 @@ let create (input : string) : t =
   let init_state = { input; position = 0; read_position = 0; ch = '\000' } in
   read_char init_state
 
+(** [read_while pred lexer] reads characters while [pred] holds. It returns the
+    consumed substring and the new lexer. The new lexer character is the first
+    one for which [pred] is false. It can raise an exception if something wrong
+    happens. *)
+let read_while (pred : char -> bool) (lexer : t) : string * t =
+  let start = lexer.position in
+  let rec consume l = if pred l.ch then consume (read_char l) else l in
+  let next_lexer = consume lexer in
+  let len = next_lexer.position - start in
+  assert (len > 0);
+  (String.sub next_lexer.input start len, next_lexer)
+
 (** [read_identifier lexer] returns the indentifer as a string and the new
     lexer. The new lexer character is the first non-letter. It raises an
     exception if something goes wrong. *)
-let read_identifier (lexer : t) : string * t =
-  let start = lexer.position in
-  let rec consume l = if is_letter l.ch then consume (read_char l) else l in
-  let next_lexer = consume lexer in
-  assert (next_lexer.position > start);
-  let ident_len = next_lexer.position - start in
-  (String.sub next_lexer.input start ident_len, next_lexer)
+let read_identifier (lexer : t) : string * t = read_while is_letter lexer
 
 (** [read_number lexer] returns the number as a string and the new lexer. It
     reads integer. The new lexer character is the first non digit letter. It
     raises an exception if something goes wrong *)
-let read_number (lexer : t) : string * t =
-  let start = lexer.position in
-  let rec consume l = if is_digit l.ch then consume (read_char l) else l in
-  let next_lexer = consume lexer in
-  assert (next_lexer.position > start);
-  let ident_len = next_lexer.position - start in
-  (String.sub next_lexer.input start ident_len, next_lexer)
+let read_number (lexer : t) : string * t = read_while is_digit lexer
 
 (** [next_token lexer] returns a tuple that is the token found and the new
     lexer. It raises an exception if something goes wrong. *)
