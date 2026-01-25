@@ -7,6 +7,12 @@ type token_type =
   (* Operators *)
   | Assign
   | Plus
+  | Minus
+  | Bang
+  | Asterisk
+  | Slash
+  | Lt
+  | Gt
   (* Delimiters *)
   | Comma
   | Semicolon
@@ -33,6 +39,12 @@ let string_of_token_type = function
   | Int -> "INT"
   | Assign -> "ASSIGN"
   | Plus -> "PLUS"
+  | Minus -> "MINUS"
+  | Bang -> "BANG"
+  | Asterisk -> "ASTERISK"
+  | Slash -> "SLASH"
+  | Lt -> "LESSTHAN"
+  | Gt -> "GREATERTHAN"
   | Comma -> "COMMA"
   | Semicolon -> "SEMICOLON"
   | Lparen -> "LPAREN"

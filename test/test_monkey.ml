@@ -177,6 +177,87 @@ let result = add(five,ten);
   in
   aux lexer expected
 
+let test_next_medium_program () =
+  let input =
+    {|
+let five = 5;
+let ten = 10;
+let add = fn(x, y) {
+x + y;
+};
+let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
+|}
+  in
+  let open Monkey.Token in
+  let expected =
+    [
+      (Let, "let")
+    ; (Ident, "five")
+    ; (Assign, "=")
+    ; (Int, "5")
+    ; (Semicolon, ";")
+    ; (Let, "let")
+    ; (Ident, "ten")
+    ; (Assign, "=")
+    ; (Int, "10")
+    ; (Semicolon, ";")
+    ; (Let, "let")
+    ; (Ident, "add")
+    ; (Assign, "=")
+    ; (Function, "fn")
+    ; (Lparen, "(")
+    ; (Ident, "x")
+    ; (Comma, ",")
+    ; (Ident, "y")
+    ; (Rparen, ")")
+    ; (Lbrace, "{")
+    ; (Ident, "x")
+    ; (Plus, "+")
+    ; (Ident, "y")
+    ; (Semicolon, ";")
+    ; (Rbrace, "}")
+    ; (Semicolon, ";")
+    ; (Let, "let")
+    ; (Ident, "result")
+    ; (Assign, "=")
+    ; (Ident, "add")
+    ; (Lparen, "(")
+    ; (Ident, "five")
+    ; (Comma, ",")
+    ; (Ident, "ten")
+    ; (Rparen, ")")
+    ; (Semicolon, ";")
+    ; (* !-/*5; *)
+      (Bang, "!")
+    ; (Minus, "-")
+    ; (Slash, "/")
+    ; (Asterisk, "*")
+    ; (Int, "5")
+    ; (Semicolon, ";")
+    ; (* 5 < 10 > 5; *)
+      (Int, "5")
+    ; (Lt, "<")
+    ; (Int, "10")
+    ; (Gt, ">")
+    ; (Int, "5")
+    ; (Semicolon, ";")
+    ; (Eof, "")
+    ]
+  in
+  let lexer = Monkey.Lexer.create input in
+  let rec aux l e =
+    let tok, next_lexer = Monkey.Lexer.next_token l in
+    match e with
+    | [] -> ()
+    | (tt, lit) :: xs ->
+        Alcotest.check token_type "same token type" tt tok.ty;
+        Alcotest.check Alcotest.string "same literal" lit tok.literal;
+        aux next_lexer xs
+  in
+  aux lexer expected
+
 let () =
   let open Alcotest in
   run "Monkey test"
@@ -190,5 +271,6 @@ let () =
             test_next_simple_tokens_with_spaces
         ; test_case "One let" `Quick test_next_one_let
         ; test_case "Less Simple tokens" `Quick test_next_less_simple_tokens
+        ; test_case "Medium program" `Quick test_next_medium_program
         ] )
     ]
