@@ -1,21 +1,5 @@
 let pp_token_type fmt tt =
-  let open Monkey.Token in
-  Format.fprintf fmt "%s"
-    (match tt with
-    | Assign -> "Assign"
-    | Plus -> "Plus"
-    | Lparen -> "Lparen"
-    | Rparen -> "Rparen"
-    | Lbrace -> "Lbrace"
-    | Rbrace -> "Rbrace"
-    | Comma -> "Comma"
-    | Semicolon -> "Semicolon"
-    | Eof -> "Eof"
-    | Let -> "Let"
-    | Ident -> "Ident"
-    | Illegal -> "Illegal"
-    | Int -> "Int"
-    | Function -> "Function")
+  Format.fprintf fmt "%s" (Monkey.Token.string_of_token_type tt)
 
 let token_type = Alcotest.testable pp_token_type ( = )
 
