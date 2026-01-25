@@ -1,7 +1,9 @@
 (** [is_letter ch] returns true if [ch] is a letter. '_' is a valid letter. It
     returns false otherwise. *)
 let is_letter ch =
-  ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch = '_'
+  match ch with
+  | 'a' .. 'z' | 'A' .. 'Z' | '_' -> true
+  | _ -> false
 
 type t = {
     input : string
@@ -15,15 +17,16 @@ type t = {
 (** [read_char lexer] returns a new lexer where field "ch" is set with the new
     character. The new lexer has the new position. *)
 let read_char (lexer : t) : t =
-  if lexer.read_position >= String.length lexer.input then
-    { lexer with ch = '\000' }
-  else
-    {
-      lexer with
-      position = lexer.read_position
-    ; read_position = lexer.read_position + 1
-    ; ch = lexer.input.[lexer.read_position]
-    }
+  let ch =
+    if lexer.read_position >= String.length lexer.input then '\000'
+    else lexer.input.[lexer.read_position]
+  in
+  {
+    lexer with
+    position = lexer.read_position
+  ; read_position = lexer.read_position + 1
+  ; ch
+  }
 
 (** [skip_whitespace lexer] returns the lexer after skipping white spaces. *)
 let rec skip_whitespace (lexer : t) : t =
@@ -43,6 +46,7 @@ let read_identifier (lexer : t) : string * t =
   let position = lexer.position in
   let rec aux l = if is_letter l.ch then aux (read_char l) else l in
   let l = aux lexer in
+  (* after aux, l.ch is the first non-letter *)
   assert (l.position > position);
   let identifier = String.sub l.input position (l.position - position) in
   Printf.printf "found identifier <%s>\n" identifier;
@@ -71,5 +75,5 @@ let next_token (lexer : t) : Token.t * t =
         let ident_type = Token.lookup_ident ident_str in
         ({ ty = ident_type; literal = ident_str }, new_lexer)
       else (
-        Printf.eprintf "Error: char <%c> not recognized\n" c;
-        (new_token Illegal, lexer))
+        Printf.eprintf "Error: char <%C> not recognized\n" c;
+        (new_token Illegal, read_char lexer))
