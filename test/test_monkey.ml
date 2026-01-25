@@ -10,7 +10,8 @@ let pp_token_type fmt tt =
     | Rbrace -> "Rbrace"
     | Comma -> "Comma"
     | Semicolon -> "Semicolon"
-    | Eof -> "Eof")
+    | Eof -> "Eof"
+    | _ -> failwith "Need to add the token")
 
 let token_type = Alcotest.testable pp_token_type ( = )
 
@@ -46,7 +47,7 @@ let test_read_char () =
   |> read_and_check ~str:"next read" ~car:'\000'
   |> ignore
 
-let test_next_token () =
+let test_next_simple_tokens () =
   let input = "=+(){},;" in
   let expected =
     [
@@ -73,11 +74,81 @@ let test_next_token () =
   in
   aux lexer expected
 
+let test_next_less_simple_tokens () =
+  let input =
+    {|
+let five = 5;
+let ten = 10;
+
+let add = fn(x, y) {
+  x + y;
+};
+
+let result = add(five,ten);
+|}
+  in
+  let expected =
+    [
+      (Monkey.Let, "let")
+    ; (Monkey.Ident, "five")
+    ; (Monkey.Assign, "=")
+    ; (Monkey.Int, "5")
+    ; (Monkey.Semicolon, ";")
+    ; (Monkey.Let, "let")
+    ; (Monkey.Ident, "ten")
+    ; (Monkey.Assign, "=")
+    ; (Monkey.Int, "10")
+    ; (Monkey.Semicolon, ";")
+    ; (Monkey.Let, "let")
+    ; (Monkey.Ident, "add")
+    ; (Monkey.Assign, "=")
+    ; (Monkey.Function, "fn")
+    ; (Monkey.Lparen, "(")
+    ; (Monkey.Ident, "x")
+    ; (Monkey.Comma, ",")
+    ; (Monkey.Ident, "y")
+    ; (Monkey.Rparen, ")")
+    ; (Monkey.Lbrace, "{")
+    ; (Monkey.Ident, "x")
+    ; (Monkey.Plus, "+")
+    ; (Monkey.Ident, "y")
+    ; (Monkey.Semicolon, ";")
+    ; (Monkey.Rbrace, "}")
+    ; (Monkey.Semicolon, ";")
+    ; (Monkey.Let, "let")
+    ; (Monkey.Ident, "result")
+    ; (Monkey.Assign, "=")
+    ; (Monkey.Ident, "add")
+    ; (Monkey.Lparen, "(")
+    ; (Monkey.Ident, "five")
+    ; (Monkey.Comma, ",")
+    ; (Monkey.Ident, "ten")
+    ; (Monkey.Rparen, ")")
+    ; (Monkey.Semicolon, ";")
+    ; (Monkey.Eof, "")
+    ]
+  in
+  let lexer = Monkey.Lexer.create input in
+  let rec aux l e =
+    let tok, new_lexer = Monkey.Lexer.next_token l in
+    match e with
+    | [] -> ()
+    | (tt, lit) :: xs ->
+        Alcotest.check token_type "same token type" tt tok.ty;
+        Alcotest.check Alcotest.string "same literal" lit tok.literal;
+        aux new_lexer xs
+  in
+  aux lexer expected
+
 let () =
   let open Alcotest in
   run "Monkey test"
     [
       ("create-lexer", [ test_case "Create a lexer" `Quick test_create_lexer ])
     ; ("read-char", [ test_case "Read chars" `Quick test_read_char ])
-    ; ("next-token", [ test_case "Simple tokens" `Quick test_next_token ])
+    ; ( "next-token"
+      , [
+          test_case "Simple tokens" `Quick test_next_simple_tokens
+        ; test_case "Less Simple tokens" `Quick test_next_less_simple_tokens
+        ] )
     ]

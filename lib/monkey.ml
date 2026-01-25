@@ -1,13 +1,22 @@
 type token_type =
+  | Illegal
+  | Eof
+  (* Identifiers + literals *)
+  | Ident
+  | Int
+  (* Operators *)
   | Assign
   | Plus
+  (* Delimiters *)
+  | Comma
+  | Semicolon
   | Lparen
   | Rparen
   | Lbrace
   | Rbrace
-  | Comma
-  | Semicolon
-  | Eof
+  (* Keywords *)
+  | Function
+  | Let
 
 type token = { ty : token_type; literal : string }
 
