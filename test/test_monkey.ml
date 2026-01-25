@@ -32,9 +32,9 @@ let test_read_char () =
   let open Monkey in
   let open Alcotest in
   let read_and_check l ~str ~car =
-    let new_lexer = Lexer.read_char l in
-    check char str car new_lexer.ch;
-    new_lexer
+    let next_lexer = Lexer.read_char l in
+    check char str car next_lexer.ch;
+    next_lexer
   in
   let input = "abc" in
   (let l = Lexer.create input in
@@ -69,13 +69,13 @@ let test_next_simple_tokens () =
   in
   let lexer = Monkey.Lexer.create input in
   let rec aux l e =
-    let tok, new_lexer = Monkey.Lexer.next_token l in
+    let tok, next_lexer = Monkey.Lexer.next_token l in
     match e with
     | [] -> ()
     | (tt, lit) :: xs ->
         Alcotest.check token_type "same token type" tt tok.ty;
         Alcotest.check Alcotest.string "same literal" lit tok.literal;
-        aux new_lexer xs
+        aux next_lexer xs
   in
   aux lexer expected
 
@@ -136,13 +136,13 @@ let result = add(five,ten);
   in
   let lexer = Monkey.Lexer.create input in
   let rec aux l e =
-    let tok, new_lexer = Monkey.Lexer.next_token l in
+    let tok, next_lexer = Monkey.Lexer.next_token l in
     match e with
     | [] -> ()
     | (tt, lit) :: xs ->
         Alcotest.check token_type "same token type" tt tok.ty;
         Alcotest.check Alcotest.string "same literal" lit tok.literal;
-        aux new_lexer xs
+        aux next_lexer xs
   in
   aux lexer expected
 

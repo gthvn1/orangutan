@@ -1,9 +1,5 @@
-(** [is_letter ch] returns true if [ch] is a letter. '_' is a valid letter. It
-    returns false otherwise. *)
-let is_letter ch =
-  match ch with
-  | 'a' .. 'z' | 'A' .. 'Z' | '_' -> true
-  | _ -> false
+(** Global variable to enable/disable debug info *)
+let debug = ref true
 
 type t = {
     input : string
@@ -14,19 +10,38 @@ type t = {
   ; ch : char  (** current char under examination *)
 }
 
+(** [debug_lexer label lexer] prints the state of the lexer prepending a
+    [label]. *)
+let debug_lexer (label : string) (lexer : t) : unit =
+  if !debug then
+    Printf.eprintf "[%s] pos=%d read_pos=%d ch=%C\n" label lexer.position
+      lexer.read_position lexer.ch
+
+(** [is_letter ch] returns true if [ch] is a letter. '_' is a valid letter. It
+    returns false otherwise. *)
+let is_letter ch =
+  match ch with
+  | 'a' .. 'z' | 'A' .. 'Z' | '_' -> true
+  | _ -> false
+
 (** [read_char lexer] returns a new lexer where field "ch" is set with the new
     character. The new lexer has the new position. *)
 let read_char (lexer : t) : t =
+  (* read char before updating the lexer *)
   let ch =
     if lexer.read_position >= String.length lexer.input then '\000'
     else lexer.input.[lexer.read_position]
   in
-  {
-    lexer with
-    position = lexer.read_position
-  ; read_position = lexer.read_position + 1
-  ; ch
-  }
+  let next_lexer_state =
+    {
+      lexer with
+      position = lexer.read_position
+    ; read_position = lexer.read_position + 1
+    ; ch
+    }
+  in
+  debug_lexer "read_char (before returning)" next_lexer_state;
+  next_lexer_state
 
 (** [skip_whitespace lexer] returns the lexer after skipping white spaces. *)
 let rec skip_whitespace (lexer : t) : t =
@@ -49,16 +64,17 @@ let read_identifier (lexer : t) : string * t =
   (* after aux, l.ch is the first non-letter *)
   assert (l.position > position);
   let identifier = String.sub l.input position (l.position - position) in
-  Printf.printf "found identifier <%s>\n" identifier;
   (identifier, l)
 
 (** [next_token lexer] returns a tuple that is the token found and the new
     lexer. It raises an expection if something goes wrong. *)
 let next_token (lexer : t) : Token.t * t =
+  debug_lexer "next_token (start)" lexer;
   let new_token (tt : Token.token_type) : Token.t =
     { ty = tt; literal = String.make 1 lexer.ch }
   in
   let lexer = skip_whitespace lexer in
+  debug_lexer "next_token (after skip_whitespace)" lexer;
   match lexer.ch with
   | '=' -> (new_token Assign, read_char lexer)
   | ';' -> (new_token Semicolon, read_char lexer)
