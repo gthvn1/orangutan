@@ -25,6 +25,12 @@ let read_char (lexer : t) : t =
     ; ch = lexer.input.[lexer.read_position]
     }
 
+(** [skip_whitespace lexer] returns the lexer after skipping white spaces. *)
+let rec skip_whitespace (lexer : t) : t =
+  if lexer.ch = ' ' || lexer.ch = '\t' || lexer.ch = '\n' || lexer.ch = '\r'
+  then skip_whitespace (read_char lexer)
+  else lexer
+
 (** [create input] returns a lexer initialized with string [input]. It returns a
     fully working state. *)
 let create (input : string) : t =
@@ -42,6 +48,7 @@ let next_token (lexer : t) : Token.t * t =
   let new_token (tt : Token.token_type) : Token.t =
     { ty = tt; literal = String.make 1 lexer.ch }
   in
+  let lexer = skip_whitespace lexer in
   match lexer.ch with
   | '=' -> (new_token Assign, read_char lexer)
   | ';' -> (new_token Semicolon, read_char lexer)
@@ -54,8 +61,9 @@ let next_token (lexer : t) : Token.t * t =
   | '\000' -> ({ ty = Eof; literal = "" }, lexer)
   | c ->
       if is_letter c then
-        let literal, new_lexer = read_identifier lexer in
-        ({ ty = Ident; literal }, new_lexer)
+        let ident_str, new_lexer = read_identifier lexer in
+        let ident_type = Token.lookup_ident ident_str in
+        ({ ty = ident_type; literal = ident_str }, new_lexer)
       else (
-        Printf.eprintf "Error: char not recognized";
+        Printf.eprintf "Error: char <%c> not recognized\n" c;
         (new_token Illegal, lexer))

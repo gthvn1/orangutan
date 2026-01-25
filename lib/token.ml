@@ -19,3 +19,9 @@ type token_type =
   | Let
 
 type t = { ty : token_type; literal : string }
+
+let lookup_ident (str : string) : token_type =
+  match str with
+  | "fn" -> Function
+  | "let" -> Let
+  | _ -> Ident
