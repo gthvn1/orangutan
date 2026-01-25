@@ -17,5 +17,5 @@ Hello, Sailor!
 
 # State
 
-- We are at page 21/210 of "Writing An Interpreter In Go"
-  - Extending our token set and lexer
+- We are at page 26/210 of "Writing An Interpreter In Go"
+  - Start of a REPL

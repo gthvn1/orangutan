@@ -17,6 +17,9 @@ let debug_lexer (label : string) (lexer : t) : unit =
     Printf.eprintf "[%s] pos=%d read_pos=%d ch=%C\n" label lexer.position
       lexer.read_position lexer.ch
 
+(** [string_of_char ch] returns a string from char. *)
+let string_of_char c = String.make 1 c
+
 (** [is_digit ch] returns true if ch is a digit, false otherwise. *)
 let is_digit = function
   | '0' .. '9' -> true
@@ -34,18 +37,22 @@ let is_whitespace = function
   | ' ' | '\t' | '\n' | '\r' -> true
   | _ -> false
 
+(** [peek_char lexer] returns the character under the read position. It doesn't
+    update the lexer. *)
+let peek_char (lexer : t) : char =
+  let at_eof = lexer.read_position >= String.length lexer.input in
+  if at_eof then '\000' else lexer.input.[lexer.read_position]
+
 (** [read_char lexer] returns a new lexer where field "ch" is set with the new
     character. The new lexer has the new position. *)
 let read_char (lexer : t) : t =
   (* read char before updating the lexer *)
-  let at_eof = lexer.read_position >= String.length lexer.input in
-  let ch = if at_eof then '\000' else lexer.input.[lexer.read_position] in
   let next =
     {
       lexer with
       position = lexer.read_position
     ; read_position = lexer.read_position + 1
-    ; ch
+    ; ch = peek_char lexer
     }
   in
   debug_lexer "read_char" next;
@@ -89,21 +96,33 @@ let next_token (lexer : t) : Token.t * t =
   debug_lexer "next_token (start)" lexer;
 
   let single_char_token (lexer : t) (tt : Token.token_type) : Token.t * t =
-    ({ ty = tt; literal = String.make 1 lexer.ch }, read_char lexer)
+    ({ ty = tt; literal = string_of_char lexer.ch }, read_char lexer)
   in
 
   let lexer = skip_whitespace lexer in
   debug_lexer "next_token (after skip_whitespace)" lexer;
 
   match lexer.ch with
-  | '=' -> single_char_token lexer Assign
+  | '=' ->
+      if peek_char lexer = '=' then
+        let c1 = lexer.ch in
+        let lexer = read_char lexer in
+        let literal = string_of_char c1 ^ string_of_char lexer.ch in
+        ({ ty = Eq; literal }, read_char lexer)
+      else single_char_token lexer Assign
   | ';' -> single_char_token lexer Semicolon
   | '(' -> single_char_token lexer Lparen
   | ')' -> single_char_token lexer Rparen
   | ',' -> single_char_token lexer Comma
   | '+' -> single_char_token lexer Plus
   | '-' -> single_char_token lexer Minus
-  | '!' -> single_char_token lexer Bang
+  | '!' ->
+      if peek_char lexer = '=' then
+        let c1 = lexer.ch in
+        let lexer = read_char lexer in
+        let literal = string_of_char c1 ^ string_of_char lexer.ch in
+        ({ ty = NotEq; literal }, read_char lexer)
+      else single_char_token lexer Bang
   | '/' -> single_char_token lexer Slash
   | '*' -> single_char_token lexer Asterisk
   | '<' -> single_char_token lexer Lt

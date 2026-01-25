@@ -194,6 +194,9 @@ if (5 < 10) {
 } else {
     return false;
 }
+
+10 == 10;
+10 != 9;
 |}
   in
   let open Monkey.Token in
@@ -267,6 +270,16 @@ if (5 < 10) {
     ; (False, "false")
     ; (Semicolon, ";")
     ; (Rbrace, "}")
+    ; (* 10 == 10; *)
+      (Int, "10")
+    ; (Eq, "==")
+    ; (Int, "10")
+    ; (Semicolon, ";")
+    ; (* 10 != 9; *)
+      (Int, "10")
+    ; (NotEq, "!=")
+    ; (Int, "9")
+    ; (Semicolon, ";")
     ; (Eof, "")
     ]
   in

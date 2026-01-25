@@ -13,6 +13,8 @@ type token_type =
   | Slash
   | Lt
   | Gt
+  | Eq
+  | NotEq
   (* Delimiters *)
   | Comma
   | Semicolon
@@ -55,6 +57,8 @@ let string_of_token_type = function
   | Slash -> "SLASH"
   | Lt -> "LESSTHAN"
   | Gt -> "GREATERTHAN"
+  | Eq -> "EQUAL"
+  | NotEq -> "NOTEQUAL"
   | Comma -> "COMMA"
   | Semicolon -> "SEMICOLON"
   | Lparen -> "LPAREN"
