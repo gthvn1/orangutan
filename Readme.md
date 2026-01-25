@@ -17,5 +17,5 @@ Hello, Sailor!
 
 # State
 
-- We are at page 20/210 of "Writing An Interpreter In Go"
-  - Add isDigit
+- We are at page 21/210 of "Writing An Interpreter In Go"
+  - Extending our token set and lexer

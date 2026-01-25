@@ -72,30 +72,47 @@ let read_identifier (lexer : t) : string * t =
   let ident_len = next_lexer.position - start in
   (String.sub next_lexer.input start ident_len, next_lexer)
 
+(** [read_number lexer] returns the number as a string and the new lexer. It
+    reads integer. The new lexer character is the first non digit letter. It
+    raises an exception if something goes wrong *)
+let read_number (lexer : t) : string * t =
+  let start = lexer.position in
+  let rec consume l = if is_digit l.ch then consume (read_char l) else l in
+  let next_lexer = consume lexer in
+  assert (next_lexer.position > start);
+  let ident_len = next_lexer.position - start in
+  (String.sub next_lexer.input start ident_len, next_lexer)
+
 (** [next_token lexer] returns a tuple that is the token found and the new
     lexer. It raises an exception if something goes wrong. *)
 let next_token (lexer : t) : Token.t * t =
   debug_lexer "next_token (start)" lexer;
-  let simple_token (lexer : t) (tt : Token.token_type) : Token.t * t =
+
+  let single_char_token (lexer : t) (tt : Token.token_type) : Token.t * t =
     ({ ty = tt; literal = String.make 1 lexer.ch }, read_char lexer)
   in
-  let next_lexer = skip_whitespace lexer in
-  debug_lexer "next_token (after skip_whitespace)" next_lexer;
-  match next_lexer.ch with
-  | '=' -> simple_token next_lexer Assign
-  | ';' -> simple_token next_lexer Semicolon
-  | '(' -> simple_token next_lexer Lparen
-  | ')' -> simple_token next_lexer Rparen
-  | ',' -> simple_token next_lexer Comma
-  | '+' -> simple_token next_lexer Plus
-  | '{' -> simple_token next_lexer Lbrace
-  | '}' -> simple_token next_lexer Rbrace
-  | '\000' -> ({ ty = Eof; literal = "" }, next_lexer)
+
+  let lexer = skip_whitespace lexer in
+  debug_lexer "next_token (after skip_whitespace)" lexer;
+
+  match lexer.ch with
+  | '=' -> single_char_token lexer Assign
+  | ';' -> single_char_token lexer Semicolon
+  | '(' -> single_char_token lexer Lparen
+  | ')' -> single_char_token lexer Rparen
+  | ',' -> single_char_token lexer Comma
+  | '+' -> single_char_token lexer Plus
+  | '{' -> single_char_token lexer Lbrace
+  | '}' -> single_char_token lexer Rbrace
+  | '\000' -> ({ ty = Eof; literal = "" }, lexer)
   | c ->
       if is_letter c then
-        let ident_str, new_lexer = read_identifier next_lexer in
+        let ident_str, lexer' = read_identifier lexer in
         let ident_type = Token.lookup_ident ident_str in
-        ({ ty = ident_type; literal = ident_str }, new_lexer)
+        ({ ty = ident_type; literal = ident_str }, lexer')
+      else if is_digit c then
+        let literal, lexer' = read_number lexer in
+        ({ ty = Int; literal }, lexer')
       else (
         Printf.eprintf "Error: char <%C> not recognized\n" c;
-        simple_token next_lexer Illegal)
+        single_char_token lexer Illegal)
