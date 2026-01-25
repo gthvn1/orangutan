@@ -23,6 +23,11 @@ type token_type =
   (* Keywords *)
   | Function
   | Let
+  | True
+  | False
+  | If
+  | Else
+  | Return
 
 type t = { ty : token_type; literal : string }
 
@@ -30,6 +35,11 @@ let lookup_ident (str : string) : token_type =
   match str with
   | "fn" -> Function
   | "let" -> Let
+  | "true" -> True
+  | "false" -> False
+  | "if" -> If
+  | "else" -> Else
+  | "return" -> Return
   | _ -> Ident
 
 let string_of_token_type = function
@@ -53,6 +63,11 @@ let string_of_token_type = function
   | Rbrace -> "RBRACE"
   | Function -> "FUNCTION"
   | Let -> "LET"
+  | True -> "TRUE"
+  | False -> "FALSE"
+  | If -> "IF"
+  | Else -> "ELSE"
+  | Return -> "RETURN"
 
 let string_of_token (t : t) : string =
   Printf.sprintf "Token(%s, %S)" (string_of_token_type t.ty) t.literal
