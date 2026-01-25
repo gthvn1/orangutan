@@ -17,17 +17,20 @@ let debug_lexer (label : string) (lexer : t) : unit =
     Printf.eprintf "[%s] pos=%d read_pos=%d ch=%C\n" label lexer.position
       lexer.read_position lexer.ch
 
+(** [is_digit ch] returns true if ch is a digit, false otherwise. *)
+let is_digit = function
+  | '0' .. '9' -> true
+  | _ -> false
+
 (** [is_letter ch] returns true if [ch] is a letter. '_' is a valid letter. It
     returns false otherwise. *)
-let is_letter ch =
-  match ch with
+let is_letter = function
   | 'a' .. 'z' | 'A' .. 'Z' | '_' -> true
   | _ -> false
 
 (** [is_whitespace ch] returns true if ch is considered as a whitespace. False
     otherwise. *)
-let is_whitespace ch =
-  match ch with
+let is_whitespace = function
   | ' ' | '\t' | '\n' | '\r' -> true
   | _ -> false
 
