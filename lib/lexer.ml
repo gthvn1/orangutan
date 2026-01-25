@@ -39,8 +39,14 @@ let create (input : string) : t =
 
 (** [read_identifier lexer] returns the indentifer as a string and the new
     lexer. It raises an exception if something goes wrong. *)
-let read_identifier (_lexer : t) : string * t =
-  failwith "TODO: implement read identifier"
+let read_identifier (lexer : t) : string * t =
+  let position = lexer.position in
+  let rec aux l = if is_letter l.ch then aux (read_char l) else l in
+  let l = aux lexer in
+  assert (l.position > position);
+  let identifier = String.sub l.input position (l.position - position) in
+  Printf.printf "found identifier <%s>\n" identifier;
+  (identifier, l)
 
 (** [next_token lexer] returns a tuple that is the token found and the new
     lexer. It raises an expection if something goes wrong. *)
