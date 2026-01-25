@@ -188,6 +188,12 @@ x + y;
 let result = add(five, ten);
 !-/*5;
 5 < 10 > 5;
+
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}
 |}
   in
   let open Monkey.Token in
@@ -243,6 +249,24 @@ let result = add(five, ten);
     ; (Gt, ">")
     ; (Int, "5")
     ; (Semicolon, ";")
+    ; (* if (5 < 10) { return true; } else { return false; } *)
+      (If, "if")
+    ; (Lparen, "(")
+    ; (Int, "5")
+    ; (Lt, "<")
+    ; (Int, "10")
+    ; (Rparen, ")")
+    ; (Lbrace, "{")
+    ; (Return, "return")
+    ; (True, "true")
+    ; (Semicolon, ";")
+    ; (Rbrace, "}")
+    ; (Else, "else")
+    ; (Lbrace, "{")
+    ; (Return, "return")
+    ; (False, "false")
+    ; (Semicolon, ";")
+    ; (Rbrace, "}")
     ; (Eof, "")
     ]
   in
