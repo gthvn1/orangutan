@@ -102,6 +102,12 @@ let next_token (lexer : t) : Token.t * t =
   | ')' -> single_char_token lexer Rparen
   | ',' -> single_char_token lexer Comma
   | '+' -> single_char_token lexer Plus
+  | '-' -> single_char_token lexer Minus
+  | '!' -> single_char_token lexer Bang
+  | '/' -> single_char_token lexer Slash
+  | '*' -> single_char_token lexer Asterisk
+  | '<' -> single_char_token lexer Lt
+  | '>' -> single_char_token lexer Gt
   | '{' -> single_char_token lexer Lbrace
   | '}' -> single_char_token lexer Rbrace
   | '\000' -> ({ ty = Eof; literal = "" }, lexer)
