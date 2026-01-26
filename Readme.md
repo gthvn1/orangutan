@@ -15,22 +15,22 @@ an 'O'.
 Hello, This is the Monkey programming language!
 Feel free to type in commands, Ctrl-D to quit.
 >> let add = fn(x,y) {x + y; };
-{Token(LET, "let")}
-{Token(IDENT, "add")}
-{Token(ASSIGN, "=")}
-{Token(FUNCTION, "fn")}
-{Token(LPAREN, "(")}
-{Token(IDENT, "x")}
-{Token(COMMA, ",")}
-{Token(IDENT, "y")}
-{Token(RPAREN, ")")}
-{Token(LBRACE, "{")}
-{Token(IDENT, "x")}
-{Token(PLUS, "+")}
-{Token(IDENT, "y")}
-{Token(SEMICOLON, ";")}
-{Token(RBRACE, "}")}
-{Token(SEMICOLON, ";")}
+{Type:"LET" Literal:"let"}
+{Type:"IDENT" Literal:"add"}
+{Type:"ASSIGN" Literal:"="}
+{Type:"FUNCTION" Literal:"fn"}
+{Type:"LPAREN" Literal:"("}
+{Type:"IDENT" Literal:"x"}
+{Type:"COMMA" Literal:","}
+{Type:"IDENT" Literal:"y"}
+{Type:"RPAREN" Literal:")"}
+{Type:"LBRACE" Literal:"{"}
+{Type:"IDENT" Literal:"x"}
+{Type:"PLUS" Literal:"+"}
+{Type:"IDENT" Literal:"y"}
+{Type:"SEMICOLON" Literal:";"}
+{Type:"RBRACE" Literal:"}"}
+{Type:"SEMICOLON" Literal:";"}
 >> Bye
 ```
 
