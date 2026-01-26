@@ -35,6 +35,16 @@ let expect_peek (parser : t) ~(token : Token.token_type) : t * bool =
   if parser.peek_token.ty = token then (next_token parser, true)
   else (parser, false)
 
+(** [cur_token_is parser token] returns true if the current token of [parser]
+    matches [token]. It returns false otherwise. *)
+let cur_token_is (parser : t) ~(token : Token.token_type) : bool =
+  parser.cur_token.ty = token
+
+(** [peek_token_is parser token] returns true if the peek token of [parser]
+    matches [token]. It returns false otherwise. *)
+let peek_token_is (parser : t) ~(token : Token.token_type) : bool =
+  parser.peek_token.ty = token
+
 (** [parse_program parser] is the entry point for parsing tokens. It expects a
     valid [parser] and will return a list of statement. *)
 let rec parse_program (parser : t) : program =
@@ -70,8 +80,8 @@ and parse_let_statement (parser : t) : Ast.Statement.t * t =
   (* After Assignement we are expecting the expression.
      TODO: parse expression. Until we implement it we advance until finding SEMICOLON *)
   let rec skip_expression p =
-    if p.cur_token.ty <> Token.Semicolon then skip_expression (next_token p)
-    else p
+    if cur_token_is p ~token:Token.Semicolon then p
+    else skip_expression (next_token p)
   in
   let parser = skip_expression parser in
   debug_parser "[let] skip expression" parser;
