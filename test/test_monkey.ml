@@ -1,4 +1,4 @@
 let () =
   let open Alcotest in
-  run "Monkey test"
+  run "MonkeyLang"
     [ ("Lexer", Test_lexer.tests); ("Parser", Test_parser.tests) ]
