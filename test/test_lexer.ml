@@ -1,5 +1,6 @@
+open Alcotest
+
 let test_create_lexer () =
-  let open Alcotest in
   let input = "hello" in
   let new_lexer = Monkey.Lexer.create input in
   check string "input" input new_lexer.input;
@@ -9,7 +10,6 @@ let test_create_lexer () =
 
 let test_read_char () =
   let open Monkey in
-  let open Alcotest in
   let read_and_check l ~str ~car =
     let next_lexer = Lexer.read_char l in
     check char str car next_lexer.ch;
@@ -243,8 +243,6 @@ if (5 < 10) {
   in
   let lexer = Monkey.Lexer.create input in
   Test_helpers.check_tokens lexer expected
-
-open Alcotest
 
 let tests =
   [
