@@ -5,13 +5,13 @@ type t = { lexer : Lexer.t; cur_token : Token.t; peek_token : Token.t }
 (** [debug_lexer label lexer] prints the state of the lexer prepending a
     [label]. *)
 
-type program = Ast.statement list
+type program = Ast.Statement.t list
 (** [program] is the root of every AST. It is simply a list of statements,
     representing the Monkey program. *)
 
 let debug_parser (label : string) (parser : t) : unit =
   if !debug then
-    Printf.eprintf "%s  current: %s  peek: %s\n%!" label
+    Printf.eprintf "%s current:%s peek:%s\n%!" label
       (Token.string_of_token parser.cur_token)
       (Token.string_of_token parser.peek_token)
 
@@ -32,7 +32,6 @@ let create (lexer : Lexer.t) : t =
     valid [parser] and will return a list of statement. *)
 let rec parse_program (parser : t) : program =
   let rec loop prog p =
-    debug_parser "parse program loop" p;
     match p.cur_token.ty with
     | Token.Eof -> List.rev prog
     | Token.Let ->
@@ -42,7 +41,7 @@ let rec parse_program (parser : t) : program =
   in
   loop [] parser
 
-and parse_let_statement (parser : t) : Ast.statement * t =
+and parse_let_statement (parser : t) : Ast.Statement.t * t =
   debug_parser "[let] begin" parser;
 
   let stmt_token = parser.cur_token in
@@ -52,12 +51,12 @@ and parse_let_statement (parser : t) : Ast.statement * t =
   (* We are expecting an Identifier after the LET token *)
   if parser.cur_token.ty <> Token.Ident then
     failwith "Parser error: we are expecting an identifier after LET";
-  let name : Ast.identifier =
+  let name : Ast.Identifier.t =
     { token = parser.cur_token; value = parser.cur_token.literal }
   in
 
   (* TODO: parse expression. Until we implement it we advance until finding SEMICOLON *)
-  let e : Ast.expression = () in
+  let e : Ast.Expression.t = () in
   let rec loop p =
     if p.cur_token.ty <> Token.Semicolon then loop (next_token p) else p
   in
