@@ -1,5 +1,9 @@
 type t = { lexer : Lexer.t; cur_token : Token.t; peek_token : Token.t }
 
+type program = Ast.statement list
+(** [program] is the root of every AST. It is simply a list of statements,
+    representing the Monkey program. *)
+
 (** [next_token parser] returns a new parser where current token and peek token
     have been updated. *)
 let next_token (parser : t) : t =
@@ -13,4 +17,4 @@ let create (lexer : Lexer.t) : t =
   let second_token, lexer = Lexer.next_token lexer in
   { lexer; cur_token = first_token; peek_token = second_token }
 
-let parse_program (_parser : t) : Ast.program = []
+let parse_program (_parser : t) : program = []

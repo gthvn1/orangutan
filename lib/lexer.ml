@@ -1,5 +1,5 @@
 (** Global variable to enable/disable debug info *)
-let debug = ref true
+let debug = ref false
 
 type t = {
     input : string
