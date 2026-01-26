@@ -3,7 +3,7 @@ let rec print_tokens lexer =
   match token with
   | { ty = Token.Eof; _ } -> ()
   | _ ->
-      Printf.printf "{%s}\n" (Token.string_of_token token);
+      Printf.printf "%s\n" (Token.string_of_token token);
       print_tokens lexer'
 
 let start () =

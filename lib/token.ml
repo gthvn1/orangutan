@@ -74,4 +74,4 @@ let string_of_token_type = function
   | Return -> "RETURN"
 
 let string_of_token (t : t) : string =
-  Printf.sprintf "Token(%s, %S)" (string_of_token_type t.ty) t.literal
+  Printf.sprintf "{Type:%S Literal:%S}" (string_of_token_type t.ty) t.literal
