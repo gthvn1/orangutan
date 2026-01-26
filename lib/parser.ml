@@ -28,6 +28,13 @@ let create (lexer : Lexer.t) : t =
   let second_token, lexer = Lexer.next_token lexer in
   { lexer; cur_token = first_token; peek_token = second_token }
 
+(** [expect_peek parser token] returns the updated parser and true if [token]
+    matches the peek token. Otherwise parser is not updated and false is
+    returned. *)
+let expect_peek (parser : t) ~(token : Token.token_type) : t * bool =
+  if parser.peek_token.ty = token then (next_token parser, true)
+  else (parser, false)
+
 (** [parse_program parser] is the entry point for parsing tokens. It expects a
     valid [parser] and will return a list of statement. *)
 let rec parse_program (parser : t) : program =
@@ -46,19 +53,19 @@ and parse_let_statement (parser : t) : Ast.Statement.t * t =
   let stmt_token = parser.cur_token in
 
   (* After the LET token we are expecting an Identifier *)
-  let parser = next_token parser in
-  debug_parser "[let] identifier" parser;
-  if parser.cur_token.ty <> Token.Ident then
+  let parser, find_ident = expect_peek parser ~token:Token.Ident in
+  if not find_ident then
     failwith "Parser error: we are expecting an identifier after LET";
+  debug_parser "[let] found identifier" parser;
   let name : Ast.Identifier.t =
     { token = parser.cur_token; value = parser.cur_token.literal }
   in
 
   (* After the identifier we are expecting an assignement *)
-  let parser = next_token parser in
-  debug_parser "[let] identifier" parser;
-  if parser.cur_token.ty <> Token.Assign then
+  let parser, find_assign = expect_peek parser ~token:Token.Assign in
+  if not find_assign then
     failwith "Parse error: we are expecting equal after the identifier";
+  debug_parser "[let] found assign" parser;
 
   (* After Assignement we are expecting the expression.
      TODO: parse expression. Until we implement it we advance until finding SEMICOLON *)
@@ -68,4 +75,6 @@ and parse_let_statement (parser : t) : Ast.Statement.t * t =
   in
   let parser = skip_expression parser in
   debug_parser "[let] skip expression" parser;
+
+  (* We can now return the statement and the new parser state *)
   (Let { token = stmt_token; name; value = () }, parser)
