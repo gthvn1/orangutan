@@ -17,4 +17,16 @@ let create (lexer : Lexer.t) : t =
   let second_token, lexer = Lexer.next_token lexer in
   { lexer; cur_token = first_token; peek_token = second_token }
 
-let parse_program (_parser : t) : program = []
+let parse_let_statement (_parser : t) : Ast.statement =
+  failwith "TODO: implement parse let statement"
+
+let parse_program (parser : t) : program =
+  let rec loop prog p =
+    match parser.cur_token.ty with
+    | Token.Eof -> List.rev prog
+    | Token.Let ->
+        let stmt = parse_let_statement p in
+        loop (stmt :: prog) (next_token p)
+    | _ -> failwith "TODO: parse other statement"
+  in
+  loop [] parser
