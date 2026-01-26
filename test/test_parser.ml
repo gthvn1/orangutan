@@ -17,10 +17,10 @@ let test_let_statements () =
   check int "number of statements" 3 (List.length program);
   let lst = List.combine expected_ident program in
   List.iter
-    (fun ((e : string), (s : Ast.Statement.t)) ->
+    (fun ((e : string), (s : Stmt.t)) ->
       match s with
-      | Let (l : Ast.Statement.let_statement) ->
-          check string "token" "let" (Ast.Statement.token_literal s);
+      | Let (l : Stmt.let_statement) ->
+          check string "token" "let" (Stmt.token_literal s);
           check string "identifier" e l.name.value)
     lst
 

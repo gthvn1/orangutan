@@ -1,11 +1,13 @@
 (** Global variable to enable/disable debug info *)
 let debug = ref true
 
+module Stmt = Ast.Statement
+
 type t = { lexer : Lexer.t; cur_token : Token.t; peek_token : Token.t }
 (** [debug_lexer label lexer] prints the state of the lexer prepending a
     [label]. *)
 
-type program = Ast.Statement.t list
+type program = Stmt.t list
 (** [program] is the root of every AST. It is simply a list of statements,
     representing the Monkey program. *)
 
@@ -63,8 +65,7 @@ let rec parse_program (parser : t) : (program, parse_error) result =
   in
   loop [] parser
 
-and parse_let_statement (parser : t) : (Ast.Statement.t * t, parse_error) result
-    =
+and parse_let_statement (parser : t) : (Stmt.t * t, parse_error) result =
   debug_parser "[let] begin" parser;
   let stmt_token = parser.cur_token in
 
@@ -80,7 +81,7 @@ and parse_let_statement (parser : t) : (Ast.Statement.t * t, parse_error) result
   debug_parser "[let] found assign" parser;
 
   (* After Assignement we are expecting the expression.
-     TODO: parse expression. Until we implement it we advance until finding SEMICOLON *)
+     TODO: parse expression. Until we implement it, advance until SEMICOLON *)
   let rec skip_expression p =
     if cur_token_is p ~token:Token.Semicolon then p
     else skip_expression (next_token p)
@@ -89,4 +90,4 @@ and parse_let_statement (parser : t) : (Ast.Statement.t * t, parse_error) result
   debug_parser "[let] skip expression" parser;
 
   (* We can now return the statement and the new parser state *)
-  Ok (Ast.Statement.Let { token = stmt_token; name; value = () }, parser)
+  Ok (Stmt.Let { token = stmt_token; name; value = () }, parser)
