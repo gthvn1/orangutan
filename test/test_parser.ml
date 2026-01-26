@@ -4,7 +4,7 @@ let test_empty_statement () =
   let open Monkey in
   let lexer = Lexer.create "" in
   let parser = Parser.create lexer in
-  let program = Parser.parse_program parser in
+  let program = Result.get_ok @@ Parser.parse_program parser in
   check bool "program is empty" true (program = [])
 
 let test_let_statements () =
@@ -13,7 +13,7 @@ let test_let_statements () =
   let expected_ident = [ "x"; "y"; "foobar" ] in
   let lexer = Lexer.create input in
   let parser = Parser.create lexer in
-  let program = Parser.parse_program parser in
+  let program = Result.get_ok @@ Parser.parse_program parser in
   check int "number of statements" 3 (List.length program);
   let lst = List.combine expected_ident program in
   List.iter

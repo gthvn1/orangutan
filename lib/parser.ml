@@ -9,11 +9,15 @@ type program = Ast.Statement.t list
 (** [program] is the root of every AST. It is simply a list of statements,
     representing the Monkey program. *)
 
+type parse_error = WrongPeekToken | UnkownStatement
+
 let debug_parser (label : string) (parser : t) : unit =
   if !debug then
     Printf.eprintf "%s current:%s peek:%s\n%!" label
       (Token.string_of_token parser.cur_token)
       (Token.string_of_token parser.peek_token)
+
+let ( let* ) = Result.bind
 
 (** [next_token parser] returns a new parser where current token and peek token
     have been updated. *)
@@ -31,9 +35,10 @@ let create (lexer : Lexer.t) : t =
 (** [expect_peek parser token] returns the updated parser and true if [token]
     matches the peek token. Otherwise parser is not updated and false is
     returned. *)
-let expect_peek (parser : t) ~(token : Token.token_type) : t * bool =
-  if parser.peek_token.ty = token then (next_token parser, true)
-  else (parser, false)
+let expect_peek (parser : t) ~(token : Token.token_type) :
+    (t, parse_error) result =
+  if parser.peek_token.ty = token then Ok (next_token parser)
+  else Error WrongPeekToken
 
 (** [cur_token_is parser token] returns true if the current token of [parser]
     matches [token]. It returns false otherwise. *)
@@ -47,34 +52,31 @@ let peek_token_is (parser : t) ~(token : Token.token_type) : bool =
 
 (** [parse_program parser] is the entry point for parsing tokens. It expects a
     valid [parser] and will return a list of statement. *)
-let rec parse_program (parser : t) : program =
+let rec parse_program (parser : t) : (program, parse_error) result =
   let rec loop prog p =
     match p.cur_token.ty with
-    | Token.Eof -> List.rev prog
+    | Token.Eof -> Ok (List.rev prog)
     | Token.Let ->
-        let stmt, p' = parse_let_statement p in
+        let* stmt, p' = parse_let_statement p in
         loop (stmt :: prog) (next_token p')
-    | _ -> failwith "TODO: parse other statement"
+    | _ -> Error UnkownStatement
   in
   loop [] parser
 
-and parse_let_statement (parser : t) : Ast.Statement.t * t =
+and parse_let_statement (parser : t) : (Ast.Statement.t * t, parse_error) result
+    =
   debug_parser "[let] begin" parser;
   let stmt_token = parser.cur_token in
 
   (* After the LET token we are expecting an Identifier *)
-  let parser, find_ident = expect_peek parser ~token:Token.Ident in
-  if not find_ident then
-    failwith "Parser error: we are expecting an identifier after LET";
+  let* parser = expect_peek parser ~token:Token.Ident in
   debug_parser "[let] found identifier" parser;
   let name : Ast.Identifier.t =
     { token = parser.cur_token; value = parser.cur_token.literal }
   in
 
   (* After the identifier we are expecting an assignement *)
-  let parser, find_assign = expect_peek parser ~token:Token.Assign in
-  if not find_assign then
-    failwith "Parse error: we are expecting equal after the identifier";
+  let* parser = expect_peek parser ~token:Token.Assign in
   debug_parser "[let] found assign" parser;
 
   (* After Assignement we are expecting the expression.
@@ -87,4 +89,4 @@ and parse_let_statement (parser : t) : Ast.Statement.t * t =
   debug_parser "[let] skip expression" parser;
 
   (* We can now return the statement and the new parser state *)
-  (Let { token = stmt_token; name; value = () }, parser)
+  Ok (Ast.Statement.Let { token = stmt_token; name; value = () }, parser)
