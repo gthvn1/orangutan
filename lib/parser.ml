@@ -1,5 +1,3 @@
-let ping () = "pong"
-
 type t = { lexer : Lexer.t; cur_token : Token.t; peek_token : Token.t }
 
 (** [next_token parser] returns a new parser where current token and peek token
@@ -15,4 +13,4 @@ let create (lexer : Lexer.t) : t =
   let second_token, lexer = Lexer.next_token lexer in
   { lexer; cur_token = first_token; peek_token = second_token }
 
-let parse_program (_parser : t) : Ast.program = failwith "todo"
+let parse_program (_parser : t) : Ast.program = []
