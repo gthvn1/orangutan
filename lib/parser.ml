@@ -43,23 +43,29 @@ let rec parse_program (parser : t) : program =
 
 and parse_let_statement (parser : t) : Ast.Statement.t * t =
   debug_parser "[let] begin" parser;
-
   let stmt_token = parser.cur_token in
 
+  (* After the LET token we are expecting an Identifier *)
   let parser = next_token parser in
-  debug_parser "[let] let identifier" parser;
-  (* We are expecting an Identifier after the LET token *)
+  debug_parser "[let] identifier" parser;
   if parser.cur_token.ty <> Token.Ident then
     failwith "Parser error: we are expecting an identifier after LET";
   let name : Ast.Identifier.t =
     { token = parser.cur_token; value = parser.cur_token.literal }
   in
 
-  (* TODO: parse expression. Until we implement it we advance until finding SEMICOLON *)
-  let e : Ast.Expression.t = () in
-  let rec loop p =
-    if p.cur_token.ty <> Token.Semicolon then loop (next_token p) else p
+  (* After the identifier we are expecting an assignement *)
+  let parser = next_token parser in
+  debug_parser "[let] identifier" parser;
+  if parser.cur_token.ty <> Token.Assign then
+    failwith "Parse error: we are expecting equal after the identifier";
+
+  (* After Assignement we are expecting the expression.
+     TODO: parse expression. Until we implement it we advance until finding SEMICOLON *)
+  let rec skip_expression p =
+    if p.cur_token.ty <> Token.Semicolon then skip_expression (next_token p)
+    else p
   in
-  let parser = loop parser in
+  let parser = skip_expression parser in
   debug_parser "[let] skip expression" parser;
-  (Let { token = stmt_token; name; value = e }, parser)
+  (Let { token = stmt_token; name; value = () }, parser)
