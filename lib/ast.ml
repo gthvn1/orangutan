@@ -3,10 +3,10 @@ type identifier = { token : Token.t; value : string }
     associated with the identifier (used for debugging/testing) and the string
     value of the identifier itself. *)
 
+type expression = unit
 (** [expression] represents expressions in Monkey. For now, the only expression
     is an identifier. Later, this will be extended to include literals, function
     calls, infix expressions, etc. *)
-type expression = Ident of identifier
 
 type let_statement = { token : Token.t; name : identifier; value : expression }
 (** [let_statement] represents a 'let' statement in Monkey. It binds an
@@ -26,7 +26,7 @@ type statement = Let of let_statement
 
     - [E expression]: wraps an expression
     - [S statement]: wraps a statement *)
-type node = E of expression | S of statement
+type node = E of expression | S of statement | I of identifier
 
 (** [token_literal node] returns the literal value of the token associated with
     the node. This is primarily used for debugging and testing, not for
@@ -34,4 +34,5 @@ type node = E of expression | S of statement
 let token_literal node : string =
   match node with
   | S (Let l) -> l.token.literal
-  | E (Ident i) -> i.token.literal
+  | I i -> i.token.literal
+  | E _ -> failwith "not implemented"
