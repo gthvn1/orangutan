@@ -1,5 +1,5 @@
 let pp_token_type fmt tt =
-  Format.fprintf fmt "%s" (Monkey.Token.string_of_token_type tt)
+  Format.fprintf fmt "%s" (Monkey.Token.Type.to_string tt)
 
 let token_type = Alcotest.testable pp_token_type ( = )
 

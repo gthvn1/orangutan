@@ -95,7 +95,7 @@ let read_number (lexer : t) : string * t = read_while is_digit lexer
 let next_token (lexer : t) : Token.t * t =
   debug_lexer "next_token (start)" lexer;
 
-  let single_char_token (lexer : t) (tt : Token.token_type) : Token.t * t =
+  let single_char_token (lexer : t) (tt : Token.Type.t) : Token.t * t =
     ({ ty = tt; literal = string_of_char lexer.ch }, read_char lexer)
   in
 

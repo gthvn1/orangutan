@@ -31,7 +31,7 @@ let test_read_char () =
   |> ignore
 
 let test_next_simple_tokens () =
-  let open Monkey.Token in
+  let open Monkey.Token.Type in
   let input = "=+(){},;" in
   let expected =
     [
@@ -50,7 +50,7 @@ let test_next_simple_tokens () =
   Test_helpers.check_tokens lexer expected
 
 let test_next_simple_tokens_with_spaces () =
-  let open Monkey.Token in
+  let open Monkey.Token.Type in
   let input = " =\t+(){},;" in
   let expected =
     [
@@ -69,7 +69,7 @@ let test_next_simple_tokens_with_spaces () =
   Test_helpers.check_tokens lexer expected
 
 let test_next_one_let () =
-  let open Monkey.Token in
+  let open Monkey.Token.Type in
   let input = "let a = b" in
   let expected =
     [ (Let, "let"); (Ident, "a"); (Assign, "="); (Ident, "b"); (Eof, "") ]
@@ -90,7 +90,7 @@ let add = fn(x, y) {
 let result = add(five,ten);
 |}
   in
-  let open Monkey.Token in
+  let open Monkey.Token.Type in
   let expected =
     [
       (Let, "let")
@@ -157,7 +157,7 @@ if (5 < 10) {
 10 != 9;
 |}
   in
-  let open Monkey.Token in
+  let open Monkey.Token.Type in
   let expected =
     [
       (Let, "let")

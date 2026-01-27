@@ -1,7 +1,7 @@
 let rec print_tokens lexer =
   let token, lexer' = Lexer.next_token lexer in
   match token with
-  | { ty = Token.Eof; _ } -> ()
+  | { ty = Token.Type.Eof; _ } -> ()
   | _ ->
       Printf.printf "%s\n" (Token.string_of_token token);
       print_tokens lexer'
