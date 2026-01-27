@@ -53,5 +53,5 @@ Feel free to type in commands, Ctrl-D to quit.
 
 # State
 
-- We are at page 41/210 of [Writing An Interpreter In Go](https://interpreterbook.com/)
+- We are at page 44/210 of [Writing An Interpreter In Go](https://interpreterbook.com/)
   - Chapter2: Parsing
