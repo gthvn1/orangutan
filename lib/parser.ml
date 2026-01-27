@@ -73,7 +73,7 @@ let rec parse_program (parser : t) : program * string list =
         match parse_let_statement p with
         | Ok (stmt, p') -> loop (stmt :: prog) (next_token p')
         | Error e -> loop prog (next_token { p with errors = e :: p.errors }))
-    | _ -> (List.rev prog, List.rev p.errors)
+    | _ -> loop prog (next_token p)
   in
   loop [] parser
 
