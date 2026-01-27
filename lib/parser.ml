@@ -73,6 +73,10 @@ let rec parse_program (parser : t) : program * string list =
         match parse_let_statement p with
         | Ok (stmt, p') -> loop (stmt :: prog) (next_token p')
         | Error e -> loop prog (next_token { p with errors = e :: p.errors }))
+    | Token.Return -> (
+        match parse_return_statement p with
+        | Ok (stmt, p') -> loop (stmt :: prog) (next_token p')
+        | Error e -> loop prog (next_token { p with errors = e :: p.errors }))
     | _ -> loop prog (next_token p)
   in
   loop [] parser
@@ -103,3 +107,18 @@ and parse_let_statement (parser : t) : (Stmt.t * t, string) result =
 
   (* We can now return the statement and the new parser state *)
   Ok (Stmt.Let { token = stmt_token; name; value = () }, parser)
+
+and parse_return_statement (parser : t) : (Stmt.t * t, string) result =
+  debug_parser "[return] begin" parser;
+  let stmt_token = parser.cur_token in
+
+  let parser = next_token parser in
+  (* TODO: we are skipping expression until we encounter semi colon *)
+  let rec skip_expression p =
+    if cur_token_is p ~token:Token.Semicolon then p
+    else skip_expression (next_token p)
+  in
+  let parser = skip_expression parser in
+  debug_parser "[return] skip expression" parser;
+
+  Ok (Stmt.Return { token = stmt_token; value = () }, parser)

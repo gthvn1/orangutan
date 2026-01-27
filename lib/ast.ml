@@ -13,27 +13,18 @@ module Expression = struct
 end
 
 module Statement = struct
-  type let_statement = {
-      token : Token.t
-    ; name : Identifier.t
-    ; value : Expression.t
-  }
-  (** [let_statement] represents a 'let' statement in Monkey. It binds an
-      expression to a variable name.
+  type let_stmt = { token : Token.t; name : Identifier.t; value : Expression.t }
+  type return_stmt = { token : Token.t; value : Expression.t }
 
-      Fields:
-      - [token]: the 'let' token itself (used for token_literal, debugging)
-      - [name]: the identifier being bound
-      - [value]: the expression assigned to the identifier *)
-
-  (** [statement] represents all statements in Monkey. Currently, the only
-      statement type is 'let_statement', but more can be added later. *)
-  type t = Let of let_statement
+  (** [t] represents all statements in Monkey. Currently, the only statement
+      type is 'let_statement', but more can be added later. *)
+  type t = Let of let_stmt | Return of return_stmt
 
   (** [token_literal node] returns the literal value of the token associated
       with the node. This is primarily used for debugging and testing, not for
       evaluation. *)
   let token_literal (stmt : t) : string =
     match stmt with
-    | Let l -> l.token.literal
+    | Let ls -> ls.token.literal
+    | Return rs -> rs.token.literal
 end
