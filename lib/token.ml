@@ -75,5 +75,5 @@ let lookup_ident (str : string) : Type.t =
   | "return" -> Return
   | _ -> Ident
 
-let string_of_token (t : t) : string =
+let to_string (t : t) : string =
   Printf.sprintf "{Type:%S Literal:%S}" (Type.to_string t.ty) t.literal

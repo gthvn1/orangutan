@@ -19,8 +19,8 @@ type program = Stmt.t list
 let debug_parser (label : string) (parser : t) : unit =
   if !debug then
     Printf.eprintf "%s current:%s peek:%s\n%!" label
-      (Token.string_of_token parser.cur_token)
-      (Token.string_of_token parser.peek_token)
+      (Token.to_string parser.cur_token)
+      (Token.to_string parser.peek_token)
 
 let ( let* ) = Result.bind
 
