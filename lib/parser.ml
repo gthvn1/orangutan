@@ -69,7 +69,7 @@ let rec parse_program (parser : t) : program * string list =
   let open Token.Type in
   let consume_stmt parse_fn acc parser =
     match parse_fn parser with
-    | Ok (s, p) -> (s :: acc, next_token p)
+    | Ok (stmt, prs) -> (stmt :: acc, next_token prs)
     | Error e -> (acc, next_token { parser with errors = e :: parser.errors })
   in
 
