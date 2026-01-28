@@ -1,5 +1,6 @@
 open Monkey;;
 
-module T = Monkey.Token;;
-module L = Monkey.Lexer;;
-module P = Monkey.Parser;;
+let prog1 = {|
+  let a = 10;
+  let b = 9;
+|}

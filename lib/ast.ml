@@ -13,7 +13,7 @@ module Expression = struct
       expression is an identifier. Later, this will be extended to include
       literals, function calls, infix expressions, etc. *)
 
-  let to_string _expr : string = "TODO: expr to string"
+  let to_string _expr : string = "<TODO: expr to string>"
 end
 
 module Statement = struct
