@@ -35,9 +35,34 @@ let test_return_statements () =
   check int "number of errors" 0 (List.length errors);
   check int "number of statements" 3 (List.length program)
 
+let test_program_string () =
+  let open Monkey in
+  let prog : Stmt.t list =
+    [
+      Ast.Statement.Let
+        {
+          token = { ty = Token.Type.Let; literal = "let" }
+        ; name =
+            {
+              token = { ty = Token.Type.Ident; literal = "myVar" }
+            ; value = "myVar"
+            }
+        ; value =
+            Ident
+              {
+                token = { ty = Token.Type.Ident; literal = "anotherValue" }
+              ; value = "anotherValue"
+              }
+        }
+    ]
+  in
+  check string "program" "let myVar = anotherValue;"
+    (Parser.program_to_string prog)
+
 let tests =
   [
     test_case "Empty statement" `Quick test_empty_statement
   ; test_case "Let statements" `Quick test_let_statements
   ; test_case "Return statements" `Quick test_return_statements
+  ; test_case "Program string" `Quick test_program_string
   ]

@@ -8,12 +8,14 @@ module Identifier = struct
 end
 
 module Expression = struct
-  type t = unit
-  (** [expression] represents expressions in Monkey. For now, the only
-      expression is an identifier. Later, this will be extended to include
-      literals, function calls, infix expressions, etc. *)
+  (* Not sure what it is... I will use Identifier because
+         It is used to test program string but it will change *)
+  type t = Todo | Ident of Identifier.t
 
-  let to_string _expr : string = "<TODO: expr to string>"
+  let to_string expr : string =
+    match expr with
+    | Todo -> ""
+    | Ident i -> Identifier.to_string i
 end
 
 module Statement = struct

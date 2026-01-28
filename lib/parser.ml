@@ -66,6 +66,10 @@ let cur_token_type_is (parser : t) ~(ty : Token.Type.t) : bool =
 let peek_token_type_is (parser : t) ~(ty : Token.Type.t) : bool =
   parser.peek_token.ty = ty
 
+(* ----------------------------------------------------------------------------
+   HERE IS THE PARSER
+   ---------------------------------------------------------------------------- *)
+
 (** [parse_program parser] is the entry point for parsing tokens. It expects a
     valid [parser] and will return a list of statement. *)
 let rec parse_program (parser : t) : program * string list =
@@ -84,7 +88,7 @@ let rec parse_program (parser : t) : program * string list =
         match parser.cur_token.ty with
         | Let -> consume_stmt parse_let_statement acc parser
         | Return -> consume_stmt parse_return_statement acc parser
-        | _ -> (acc, next_token parser)
+        | _ -> consume_stmt parse_expression_statement acc parser
       in
       loop acc' parser'
   in
@@ -115,7 +119,7 @@ and parse_let_statement (parser : t) : (Stmt.t * t, string) result =
   debug_parser "[let] skip expression" parser;
 
   (* We can now return the statement and the new parser state *)
-  Ok (Stmt.Let { token = stmt_token; name; value = () }, parser)
+  Ok (Stmt.Let { token = stmt_token; name; value = Ast.Expression.Todo }, parser)
 
 and parse_return_statement (parser : t) : (Stmt.t * t, string) result =
   debug_parser "[return] begin" parser;
@@ -130,4 +134,7 @@ and parse_return_statement (parser : t) : (Stmt.t * t, string) result =
   let parser = skip_expression parser in
   debug_parser "[return] skip expression" parser;
 
-  Ok (Stmt.Return { token = stmt_token; value = () }, parser)
+  Ok (Stmt.Return { token = stmt_token; value = Ast.Expression.Todo }, parser)
+
+and parse_expression_statement (_parser : t) : (Stmt.t * t, string) result =
+  failwith "TODO: parser expression"
