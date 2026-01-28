@@ -14,6 +14,9 @@ type program = Stmt.t list
 (** [program] is the root of every AST. It is simply a list of statements,
     representing the Monkey program. *)
 
+let program_to_string prog =
+  prog |> List.map (fun s -> Ast.Statement.to_string s) |> String.concat " "
+
 (** [debug_lexer label lexer] prints the state of the lexer prepending a
     [label]. *)
 let debug_parser (label : string) (parser : t) : unit =
