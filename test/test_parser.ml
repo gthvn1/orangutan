@@ -35,6 +35,19 @@ let test_return_statements () =
   check int "number of errors" 0 (List.length errors);
   check int "number of statements" 3 (List.length program)
 
+let test_ident_expression () =
+  let open Monkey in
+  let input = "foobar;" in
+  let lexer = Lexer.create input in
+  let parser = Parser.create lexer in
+  let program, errors = Parser.parse_program parser in
+  check int "number of errors" 0 (List.length errors);
+  check int "number of statements" 1 (List.length program);
+  let stmt = List.hd program in
+  match stmt with
+  | Expression _e -> check string "todo" "todo" "todo"
+  | _ -> fail "We are only expecting EXPR statement"
+
 let test_program_string () =
   let open Monkey in
   let prog : Stmt.t list =
@@ -64,5 +77,6 @@ let tests =
     test_case "Empty statement" `Quick test_empty_statement
   ; test_case "Let statements" `Quick test_let_statements
   ; test_case "Return statements" `Quick test_return_statements
+  ; test_case "Expression identifier" `Quick test_ident_expression
   ; test_case "Program string" `Quick test_program_string
   ]

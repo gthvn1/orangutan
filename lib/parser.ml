@@ -137,4 +137,4 @@ and parse_return_statement (parser : t) : (Stmt.t * t, string) result =
   Ok (Stmt.Return { token = stmt_token; value = Ast.Expression.Todo }, parser)
 
 and parse_expression_statement (_parser : t) : (Stmt.t * t, string) result =
-  failwith "TODO: parser expression"
+  failwith "TODO: parse expression"
