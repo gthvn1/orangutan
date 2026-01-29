@@ -1,0 +1,13 @@
+(executable
+ (name main)
+ (modules main)
+ (libraries pratt))
+
+(library
+ (name pratt)
+ (modules pratt))
+
+(test
+ (name test_pratt)
+ (modules test_pratt)
+ (libraries pratt alcotest))
