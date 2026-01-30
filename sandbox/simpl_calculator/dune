@@ -1,5 +1,6 @@
 (executable
  (name main)
- (modules main))
+ (modules calc_lexer main))
 
-(ocamllex lexer)
+(ocamllex
+ (modules calc_lexer))
