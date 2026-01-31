@@ -64,10 +64,10 @@ let rec parse_expr (s : state) (bp : int) : state * expr =
 (*
    What can start an expression ?
    We can only have:
-    - an integer
-    - a prefix +
-    - a prefix -
-    - a left parenthesis
+    - an integer   : 5 + ..
+    - a prefix +   : +8 * ...
+    - a prefix -   : -2 + ...
+    - a left parenthesis : ( ...
  *)
 and parse_prefix (s : state) : state * expr =
   match peek s with
