@@ -1,10 +1,4 @@
-type expr =
-  | Int of int
-  | Add of expr * expr
-  | Sub of expr * expr
-  | Neg of expr
-  | Pos of expr
-
+type expr = Int of int | Add of expr * expr | Sub of expr * expr | Neg of expr
 type state = { tokens : Lexer.Token.t list }
 
 (** [peek s] returns the next token. If there is no more tokens it returns None.
@@ -21,7 +15,33 @@ let consume (s : state) : state =
   | [] -> failwith "no more tokens to consume"
   | _ :: xs -> { tokens = xs }
 
-(*
-  We want to parse: +5 - (-2)
-  => We want to reach: Sub (Pos(Int 5), Neg(Int 2))
-*)
+let parse_expr (_s : state) : state * expr = failwith "TODO: parse expression"
+
+(* What can start an expression ?
+   We can only have:
+    - an integer
+    - a prefix +
+    - a prefix -
+    - a left parenthesis
+ *)
+let rec parse_prefix (s : state) : state * expr =
+  match peek s with
+  | Some (Lexer.Token.Int n) ->
+      let s = consume s in
+      (s, Int n)
+  | Some Lexer.Token.Plus ->
+      (* Plus as a prefix is just ignored *)
+      consume s |> parse_prefix
+  | Some Lexer.Token.Minus ->
+      let s = consume s in
+      let s, e = parse_prefix s in
+      (s, Neg e)
+  | Some Lexer.Token.Lparen -> (
+      let s = consume s in
+      let s, e = parse_expr s in
+      (* Here we are expecting: '(' expr ')' *)
+      match peek s with
+      | Some Lexer.Token.Rparen -> (s, e)
+      | _ -> failwith "Right parenthesis is expected to close expression")
+  | Some t -> failwith ("Unexpected token: " ^ Lexer.Token.to_string t)
+  | None -> failwith "Unexpected end of input"
