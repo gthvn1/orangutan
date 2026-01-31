@@ -1,5 +1,5 @@
 (*
-   We want to parse: +5 - (-2) 
+   We want to parse: +5 - (-2)
    We support integer, addition, soustraction and multiplication
  *)
 
@@ -17,7 +17,7 @@ end
 let is_digit c = '0' <= c && c <= '9'
 let char_to_int c = Char.code c - Char.code '0'
 
-let to_tokens (input : string) : Token.t list =
+let tokenize (input : string) : Token.t list =
   let digits_to_int (digits : char list) : int =
     digits |> List.to_seq |> String.of_seq |> int_of_string
   in

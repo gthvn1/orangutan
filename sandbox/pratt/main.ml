@@ -1,4 +1,5 @@
 let () =
-  let _p : Pratt.Token.t = Pratt.Token.Plus in
-  Pratt.to_tokens "123" |> ignore;
+  let open Pratt.Lexer in
+  let _p : Token.t = Token.Plus in
+  tokenize "123" |> ignore;
   print_endline "Hello from pratt"
