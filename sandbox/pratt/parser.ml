@@ -15,7 +15,9 @@ let consume (s : state) : state =
   | [] -> failwith "no more tokens to consume"
   | _ :: xs -> { tokens = xs }
 
-let parse_expr (_s : state) : state * expr = failwith "TODO: parse expression"
+let rec parse_expr (s : state) : state * expr =
+  (* TODO: really parse an expression *)
+  parse_prefix s
 
 (* What can start an expression ?
    We can only have:
@@ -24,7 +26,7 @@ let parse_expr (_s : state) : state * expr = failwith "TODO: parse expression"
     - a prefix -
     - a left parenthesis
  *)
-let rec parse_prefix (s : state) : state * expr =
+and parse_prefix (s : state) : state * expr =
   match peek s with
   | Some (Lexer.Token.Int n) ->
       let s = consume s in
