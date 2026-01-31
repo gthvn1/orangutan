@@ -4,11 +4,13 @@
  *)
 
 module Token = struct
-  type t = Plus | Minus | Lparen | Rparen | Int of int
+  type t = Plus | Minus | Mult | Div | Lparen | Rparen | Int of int
 
   let to_string = function
     | Plus -> "+"
     | Minus -> "-"
+    | Mult -> "*"
+    | Div -> "/"
     | Lparen -> "("
     | Rparen -> ")"
     | Int x -> string_of_int x
@@ -38,6 +40,8 @@ let tokenize (input : string) : Token.t list =
             match c with
             | '+' -> Token.Plus
             | '-' -> Token.Minus
+            | '*' -> Token.Mult
+            | '/' -> Token.Div
             | '(' -> Token.Lparen
             | ')' -> Token.Rparen
             | _ -> failwith (Printf.sprintf "unknown %c" c)

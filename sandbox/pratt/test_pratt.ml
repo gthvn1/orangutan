@@ -12,6 +12,10 @@ let rec pp_expr fmt = function
       Format.fprintf fmt "Add (%a,%a)" pp_expr l pp_expr r
   | Pratt.Parser.Sub (l, r) ->
       Format.fprintf fmt "Sub (%a,%a)" pp_expr l pp_expr r
+  | Pratt.Parser.Mul (l, r) ->
+      Format.fprintf fmt "Mul (%a,%a)" pp_expr l pp_expr r
+  | Pratt.Parser.Div (l, r) ->
+      Format.fprintf fmt "Div (%a,%a)" pp_expr l pp_expr r
 
 let expr_testable = Alcotest.testable pp_expr ( = )
 
@@ -43,7 +47,7 @@ let test_plus5 () =
   let open Pratt in
   let tokens = Lexer.tokenize "+5" in
   let state = Parser.{ tokens } in
-  let _, ast = Parser.parse_expr state in
+  let _, ast = Parser.parse_expr state 0 in
   let expected = Parser.Int 5 in
   Alcotest.(check expr_testable) "parse +5" expected ast
 
@@ -51,7 +55,7 @@ let test_minus5 () =
   let open Pratt in
   let tokens = Lexer.tokenize "-5" in
   let state = Parser.{ tokens } in
-  let _, ast = Parser.parse_expr state in
+  let _, ast = Parser.parse_expr state 0 in
   let expected = Parser.Neg (Parser.Int 5) in
   Alcotest.(check expr_testable) "parse -5" expected ast
 
@@ -59,7 +63,7 @@ let test_parens () =
   let open Pratt in
   let tokens = Lexer.tokenize "(-2)" in
   let state = Parser.{ tokens } in
-  let _, ast = Parser.parse_expr state in
+  let _, ast = Parser.parse_expr state 0 in
   let expected = Parser.Neg (Parser.Int 2) in
   Alcotest.(check expr_testable) "parse (-2)" expected ast
 
@@ -67,7 +71,7 @@ let test_nested () =
   let open Pratt in
   let tokens = Lexer.tokenize "+(-(-5))" in
   let state = Parser.{ tokens } in
-  let _, ast = Parser.parse_expr state in
+  let _, ast = Parser.parse_expr state 0 in
   let expected = Parser.Neg (Parser.Neg (Parser.Int 5)) in
   Alcotest.(check expr_testable) "parse +(-(-5))" expected ast
 
