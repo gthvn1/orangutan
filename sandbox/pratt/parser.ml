@@ -88,7 +88,9 @@ and parse_prefix (s : state) : state * expr =
       let s, e = parse_expr s 0 in
       (* Here we are expecting: '(' expr ')' *)
       match peek s with
-      | Some Lexer.Token.Rparen -> (s, e)
+      | Some Lexer.Token.Rparen ->
+          let s = consume s in
+          (s, e)
       | _ -> failwith "Right parenthesis is expected to close expression")
   | Some t -> failwith ("Unexpected token: " ^ Lexer.Token.to_string t)
   | None -> failwith "Unexpected end of input"

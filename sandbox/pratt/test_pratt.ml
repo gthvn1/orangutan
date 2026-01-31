@@ -75,6 +75,36 @@ let test_nested () =
   let expected = Parser.Neg (Parser.Neg (Parser.Int 5)) in
   Alcotest.(check expr_testable) "parse +(-(-5))" expected ast
 
+let test_add_mul () =
+  let open Pratt in
+  let tokens = Lexer.tokenize "5+3*2" in
+  let state = Parser.{ tokens } in
+  let _, ast = Parser.parse_expr state 0 in
+  let expected =
+    Parser.Add (Parser.Int 5, Parser.Mul (Parser.Int 3, Parser.Int 2))
+  in
+  Alcotest.(check expr_testable) "parse 5+3*2" expected ast
+
+let test_mul_add () =
+  let open Pratt in
+  let tokens = Lexer.tokenize "5*3+2" in
+  let state = Parser.{ tokens } in
+  let _, ast = Parser.parse_expr state 0 in
+  let expected =
+    Parser.Add (Parser.Mul (Parser.Int 5, Parser.Int 3), Parser.Int 2)
+  in
+  Alcotest.(check expr_testable) "parse 5*3+2" expected ast
+
+let test_paren_mul () =
+  let open Pratt in
+  let tokens = Lexer.tokenize "(5+3)*2" in
+  let state = Parser.{ tokens } in
+  let _, ast = Parser.parse_expr state 0 in
+  let expected =
+    Parser.Mul (Parser.Add (Parser.Int 5, Parser.Int 3), Parser.Int 2)
+  in
+  Alcotest.(check expr_testable) "parse (5 + 3) * 2" expected ast
+
 (* ------------------------------
              RUN IT
   ------------------------------- *)
@@ -89,5 +119,8 @@ let () =
         ; Alcotest.test_case "parse -5" `Quick test_minus5
         ; Alcotest.test_case "parse (-2)" `Quick test_parens
         ; Alcotest.test_case "parse +(-(-5))" `Quick test_nested
+        ; Alcotest.test_case "parse 5 + 3 * 2" `Quick test_add_mul
+        ; Alcotest.test_case "parse 5 * 3 + 2" `Quick test_mul_add
+        ; Alcotest.test_case "parse (5 + 3) * 2" `Quick test_paren_mul
         ] )
     ]
