@@ -33,24 +33,24 @@ let tokenize (input : string) : Token.t list =
   let rec loop (num : char list) (acc : Token.t list) (l : char list) =
     match l with
     | [] -> flush_number acc num |> List.rev
-    | c :: cs ->
+    | c :: cs -> (
         if is_digit c then loop (c :: num) acc cs
         else
           let token =
             match c with
-            | '+' -> Some(Token.Plus)
-            | '-' -> Some(Token.Minus)
-            | '*' -> Some(Token.Mult)
-            | '/' -> Some(Token.Div)
-            | '(' -> Some(Token.Lparen)
-            | ')' -> Some(Token.Rparen)
+            | '+' -> Some Token.Plus
+            | '-' -> Some Token.Minus
+            | '*' -> Some Token.Mult
+            | '/' -> Some Token.Div
+            | '(' -> Some Token.Lparen
+            | ')' -> Some Token.Rparen
             | ' ' | '\n' | '\r' | '\t' -> None
             | _ -> failwith (Printf.sprintf "unknown %c" c)
           in
           let acc = flush_number acc num in
           match token with
-          | Some(token) -> loop [] (token :: acc) cs
-          | None -> loop [] acc cs
+          | Some token -> loop [] (token :: acc) cs
+          | None -> loop [] acc cs)
   in
   let chars = String.to_seq input |> List.of_seq in
   loop [] [] chars
