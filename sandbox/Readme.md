@@ -1,0 +1,2 @@
+- In `pratt/`, we experiment with a simple calculator implemented using Pratt parsing. See [Top Down Operator Precedence](https://dl.acm.org/doi/10.1145/512927.512931).
+- In `simpl_calculator`, we experiment with using [Ocamllex and Menhir](https://dev.realworldocaml.org/parsing-with-ocamllex-and-menhir.html)
