@@ -19,7 +19,9 @@ Example expressions it can handle:
 - `stack_vm.ml`: Executes the bytecode on a simple **stack-based virtual machine**.
 
 Future plans include generating **x86_64 assembly** from the same bytecode and producing
-native executables.
+native executables. The easy path is to generate an equivalent of `calc.s` and use an
+external tool to produce the binary (ie `gcc -no-pie calc.s -o calc`). The return code
+will be the exepected result.
 
 ## Example usage
 
