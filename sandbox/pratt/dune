@@ -5,7 +5,7 @@
 
 (library
  (name pratt)
- (modules lexer parser))
+ (modules lexer parser evaluator))
 
 (test
  (name test_pratt)
