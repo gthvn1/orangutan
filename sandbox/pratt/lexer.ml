@@ -38,16 +38,19 @@ let tokenize (input : string) : Token.t list =
         else
           let token =
             match c with
-            | '+' -> Token.Plus
-            | '-' -> Token.Minus
-            | '*' -> Token.Mult
-            | '/' -> Token.Div
-            | '(' -> Token.Lparen
-            | ')' -> Token.Rparen
+            | '+' -> Some(Token.Plus)
+            | '-' -> Some(Token.Minus)
+            | '*' -> Some(Token.Mult)
+            | '/' -> Some(Token.Div)
+            | '(' -> Some(Token.Lparen)
+            | ')' -> Some(Token.Rparen)
+            | ' ' | '\n' | '\r' | '\t' -> None
             | _ -> failwith (Printf.sprintf "unknown %c" c)
           in
           let acc = flush_number acc num in
-          loop [] (token :: acc) cs
+          match token with
+          | Some(token) -> loop [] (token :: acc) cs
+          | None -> loop [] acc cs
   in
   let chars = String.to_seq input |> List.of_seq in
   loop [] [] chars
