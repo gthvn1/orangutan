@@ -13,10 +13,10 @@ Example expressions it can handle:
 
 ## Project structure
 
-- `lexer.ml` — Tokenizes input strings into arithmetic tokens.
-- `parser.ml` — Parses tokens into an abstract syntax tree (AST) using a Pratt parser.
-- `compiler.ml` — Compiles the AST into **stack-based bytecode**.
-- `stack_vm.ml` — Executes the bytecode on a simple **stack-based virtual machine**.
+- `lexer.ml`: Tokenizes input strings into arithmetic tokens.
+- `parser.ml`: Parses tokens into an abstract syntax tree (AST) using a Pratt parser.
+- `compiler.ml`: Compiles the AST into **stack-based bytecode**.
+- `stack_vm.ml`: Executes the bytecode on a simple **stack-based virtual machine**.
 
 Future plans include generating **x86_64 assembly** from the same bytecode and producing
 native executables.
